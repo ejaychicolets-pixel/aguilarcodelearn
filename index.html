@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeLearn - Learn to Code Step by Step</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">CodeLearn</div>
+    <nav id="language-tabs" class="language-tabs"></nav>
+    <div class="progress-wrap">
+      <span id="progress-text">0% complete</span>
+      <div class="progress-bar"><div id="progress-fill"></div></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h2 id="track-title">Track</h2>
+      <ol id="lesson-list" class="lesson-list"></ol>
+    </aside>
+
+    <main class="content" id="content">
+      <!-- Lesson renders here -->
+    </main>
+  </div>
+
+  <script src="lessons/javascript.js"></script>
+  <script src="lessons/python.js"></script>
+  <script src="lessons/html.js"></script>
+  <script src="lessons/css.js"></script>
+  <script src="lessons/cpp.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
