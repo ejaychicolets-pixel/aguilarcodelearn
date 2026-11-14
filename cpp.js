@@ -10,9 +10,9 @@ window.LESSON_TRACKS.cpp = {
       explain: `
         <p>Every C++ program starts in <code>main()</code>. <code>#include &lt;iostream&gt;</code> brings in tools for input and output, and <code>std::cout</code> prints text.</p>
         <p>You must declare a variable's type: <code>int</code> for whole numbers, <code>double</code> for decimals, <code>string</code> for text (with <code>#include &lt;string&gt;</code>).</p>`,
-      example: `#include <iostream>
-#include <string>
-using namespace std;
+      example: `      #include <iostream>
+      #include <string>
+      using namespace std;
 
 int main() {
     string name = "Maria";
@@ -21,6 +21,8 @@ int main() {
     cout << "Age next year: " << age + 1 << endl;
     return 0;
 }`,
+      exampleResult: `Hello, Maria
+Age next year: 18`,
       exercise: {
         prompt: "Write a program that declares an <code>int</code> called <code>year</code> and prints <code>The year is 2026</code> using that variable.",
         starter: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    return 0;\n}`,
@@ -58,6 +60,9 @@ int main() {
     }
     return 0;
 }`,
+      exampleResult: `1 squared is 1
+2 squared is 4
+3 squared is 9`,
       exercise: {
         prompt: "Write a function <code>int add(int a, int b)</code> that returns the sum. Print <code>add(4, 5)</code> from main.",
         starter: `#include <iostream>\nusing namespace std;\n\n// Write your function here\n\nint main() {\n    // Call it here\n    return 0;\n}`,
@@ -75,6 +80,84 @@ int main() {
         { q: "What does the middle part of a for loop check?", options: ["The start value", "The step", "The condition", "The return value"], answer: 2 },
         { q: "What does a function declared as int square(int n) give back?", options: ["Nothing", "A string", "An integer", "A double"], answer: 2 },
       ],
+    },
+    {
+      id: "cpp-3-vectors",
+      title: "3. Vectors and algorithms",
+      level: "Intermediate",
+      summary: "Store a changing number of values and process them with standard algorithms.",
+      explain: `
+        <p><code>std::vector</code> is a resizable sequence. Use <code>push_back()</code> to add items and range-based <code>for</code> loops to visit each one.</p>
+        <p>Include the standard headers you use. <code>std::accumulate</code> from <code>&lt;numeric&gt;</code> can combine a range into a total.</p>`,
+      example: `#include <iostream>
+#include <numeric>
+#include <vector>
+
+int main() {
+    std::vector<int> scores{80, 90, 100};
+    scores.push_back(95);
+    int total = std::accumulate(scores.begin(), scores.end(), 0);
+    std::cout << "Count: " << scores.size() << "\\n";
+    std::cout << "Total: " << total << "\\n";
+}`,
+      exampleResult: `Count: 4
+Total: 365`,
+      exercise: {
+        prompt: "Create a vector of integers, add 7 with push_back, and print the vector's size.",
+        starter: `#include <iostream>\n#include <vector>\n\nint main() {\n    // Create and update a vector\n}`,
+        hint: "Declare std::vector<int> values{2, 4}; then call values.push_back(7).",
+        solution: `#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> values{2, 4};\n    values.push_back(7);\n    std::cout << values.size() << "\\n";\n}`,
+        check: (code) => {
+          const vector = /vector\s*<\s*int\s*>/.test(code);
+          const push = /\.push_back\(\s*7\s*\)/.test(code);
+          const size = /\.size\(\)/.test(code);
+          return vector && push && size
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Use a vector<int>, push_back(7), and print its size()." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "cpp-4-classes-raii",
+      title: "4. Classes and resource safety",
+      level: "Advanced",
+      summary: "Encapsulate behavior and let object lifetimes manage resources.",
+      explain: `
+        <p>A class groups data and functions. Keep implementation details <code>private</code> and expose intentional operations with <code>public</code> methods.</p>
+        <p>RAII ties resource lifetime to object lifetime: acquire a resource in a constructor and release it in a destructor. Standard library types such as <code>std::vector</code> manage their own memory.</p>`,
+      example: `#include <iostream>
+#include <string>
+#include <utility>
+
+class Greeter {
+public:
+    explicit Greeter(std::string name) : name_(std::move(name)) {}
+    void greet() const { std::cout << "Hello, " << name_ << "\\n"; }
+private:
+    std::string name_;
+};
+
+int main() {
+    Greeter person("Ada");
+    person.greet();
+}`,
+      exampleResult: `Hello, Ada`,
+      exercise: {
+        prompt: "Create a class Box that stores a private integer value and exposes a public getValue() const method.",
+        starter: `class Box {\n    // Add private data and a public getter\n};`,
+        hint: "Put int value_ under private: and define int getValue() const under public:.",
+        solution: `class Box {\nprivate:\n    int value_;\npublic:\n    explicit Box(int value) : value_(value) {}\n    int getValue() const { return value_; }\n};`,
+        check: (code) => {
+          const cls = /class\s+Box\s*\{/.test(code);
+          const privateValue = /private\s*:[\s\S]*int\s+value_/.test(code);
+          const getter = /int\s+getValue\s*\(\s*\)\s*const/.test(code);
+          return cls && privateValue && getter
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Add private value_ data and a public const getValue() method." };
+        },
+      },
+      quiz: [],
     },
   ],
 };

@@ -39,8 +39,12 @@ function isDone(track, lesson) {
 }
 
 function markDone(track, lesson) {
-  progress[lessonKey(track, lesson)] = true;
-  saveProgress();
+  const key = lessonKey(track, lesson);
+  const newlyCompleted = !progress[key];
+  progress[key] = true;
+  if (newlyCompleted) {
+    saveProgress();
+  }
   renderSidebar();
   renderOverallProgress();
 }
@@ -111,7 +115,12 @@ function renderLesson() {
   const runnerType = TRACKS[state.track].runner;
 
   content.innerHTML = `
-    <h1>${lesson.title}</h1>
+    <div class="lesson-heading">
+      <div>
+        <span class="lesson-level">${lesson.level || (state.lessonIndex < 2 ? "Beginner" : state.lessonIndex < lessons.length - 1 ? "Intermediate" : "Advanced")}</span>
+        <h1>${lesson.title}</h1>
+      </div>
+    </div>
     <p class="lead">${lesson.summary || ""}</p>
 
     <div class="card">
@@ -121,6 +130,9 @@ function renderLesson() {
     <h2>Example: read it, then run it</h2>
     <div class="card">
       <pre><code>${escapeHtml(lesson.example)}</code></pre>
+      ${runnerType === "html"
+    ? `<h3 class="result-heading">Rendered example result</h3><p class="example-result-note">${escapeHtml(lesson.exampleResult || "The HTML is rendered in the preview below.")}</p>`
+    : `<h3 class="result-heading">Example result</h3><pre class="example-result">${escapeHtml(lesson.exampleResult || "Run this example to see its output.")}</pre>`}
       ${runnerBlock(runnerType, lesson.example, "example")}
     </div>
 
@@ -139,7 +151,7 @@ function renderLesson() {
       </details>
     </div>
 
-    <h2>Quick check</h2>
+    <h2>20-question review</h2>
     <div class="card" id="quiz"></div>
 
     <div class="nav-row">
@@ -149,6 +161,9 @@ function renderLesson() {
   `;
 
   renderQuiz(lesson);
+  if (runnerType === "html") {
+    document.getElementById("example-frame").srcdoc = lesson.example;
+  }
   document.getElementById("prev-btn").onclick = () => goTo(state.lessonIndex - 1);
   document.getElementById("next-btn").onclick = () => goTo(state.lessonIndex + 1);
   window.scrollTo(0, 0);
@@ -173,7 +188,7 @@ function runnerBlock(type, fixedCode, which) {
     return `<div class="btn-row">
       <button class="btn" onclick="runHTML('${which}')">▶ Preview</button>
     </div>
-    <iframe class="preview-frame" id="${which}-frame" sandbox="allow-scripts"></iframe>`;
+    <iframe class="preview-frame" id="${which}-frame" title="${which === "example" ? "Example rendered result" : "Exercise preview"}" sandbox="allow-scripts"></iframe>`;
   }
   if (type === "python") {
     return `<div class="btn-row">
@@ -204,7 +219,7 @@ function setOutput(which, text, isError) {
   el.classList.toggle("error", !!isError);
 }
 
-function runJS(which) {
+async function runJS(which) {
   const code = getCode(which);
   const logs = [];
   const fakeConsole = {
@@ -214,7 +229,8 @@ function runJS(which) {
   };
   try {
     // Run in a function scope with console replaced, so output appears on the page.
-    new Function("console", code)(fakeConsole);
+    const execute = new Function("console", `return (async () => {\n${code}\n})()`);
+    await execute(fakeConsole);
     setOutput(which, logs.length ? logs.join("\n") : "(no output - try console.log)", false);
   } catch (err) {
     setOutput(which, logs.join("\n") + (logs.length ? "\n" : "") + "Error: " + err.message, true);
@@ -309,38 +325,82 @@ function createFeedbackEl() {
 function renderQuiz(lesson) {
   const el = document.getElementById("quiz");
   el.innerHTML = "";
-  lesson.quiz.forEach((item, qi) => {
+  const questions = buildLessonQuiz(lesson);
+  const grid = document.createElement("div");
+  grid.className = "quiz-grid";
+  questions.forEach((item, qi) => {
     const wrap = document.createElement("div");
-    wrap.innerHTML = `<div class="quiz-q">${qi + 1}. ${item.q}</div>`;
+    wrap.className = "quiz-item";
+    const question = document.createElement("div");
+    question.className = "quiz-q";
+    question.textContent = `${qi + 1}. ${item.q}`;
+    wrap.appendChild(question);
     item.options.forEach((opt, oi) => {
       const label = document.createElement("label");
       label.className = "quiz-opt";
-      label.innerHTML = `<input type="radio" name="q${qi}" value="${oi}"> ${escapeHtml(opt)}`;
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = `q${qi}`;
+      input.value = oi;
+      const text = document.createTextNode(" " + opt);
+      label.append(input, text);
       wrap.appendChild(label);
     });
-    el.appendChild(wrap);
+    grid.appendChild(wrap);
   });
+  el.appendChild(grid);
 
   const btn = document.createElement("button");
   btn.className = "btn";
   btn.textContent = "Check answers";
   btn.onclick = () => {
     let correct = 0;
-    lesson.quiz.forEach((item, qi) => {
+    questions.forEach((item, qi) => {
       const chosen = document.querySelector(`input[name="q${qi}"]:checked`);
       if (chosen && Number(chosen.value) === item.answer) correct++;
     });
     const msg = document.createElement("div");
-    const allRight = correct === lesson.quiz.length;
+    const allRight = correct === questions.length;
     msg.className = "feedback " + (allRight ? "ok" : "bad");
     msg.textContent = allRight
       ? `All ${correct} correct. Lesson complete!`
-      : `${correct} of ${lesson.quiz.length} correct. Review the lesson and try again.`;
+      : `${correct} of ${questions.length} correct. Review the lesson and try again.`;
     el.querySelectorAll(".feedback").forEach((n) => n.remove());
     el.appendChild(msg);
     if (allRight) markDone(state.track, lesson);
   };
   el.appendChild(btn);
+}
+
+function buildLessonQuiz(lesson) {
+  const facts = window.LESSON_QUIZ_FACTS[lesson.id];
+  if (!facts || facts.length !== 5) return lesson.quiz;
+
+  const questions = [];
+  const questionKinds = [
+    { field: "meaning", prompt: (fact) => `What does ${fact.term} help you do?` },
+    { field: "syntax", prompt: (fact) => `Which example correctly uses ${fact.term}?` },
+    { field: "result", prompt: (fact) => `What does this ${fact.term} example produce: ${fact.syntax}?` },
+    { field: "pitfall", prompt: (fact) => `Which mistake should you avoid with ${fact.term}?` },
+  ];
+
+  questionKinds.forEach((kind) => {
+    facts.forEach((fact, index) => {
+      const options = [fact[kind.field]];
+      for (let offset = 1; offset < facts.length && options.length < 4; offset++) {
+        const distractor = facts[(index + offset) % facts.length][kind.field];
+        if (!options.includes(distractor)) options.push(distractor);
+      }
+      if (options.length !== 4) {
+        throw new Error(`Quiz facts for ${lesson.id} must have four distinct ${kind.field} choices.`);
+      }
+      const answer = Math.floor(Math.random() * options.length);
+      [options[answer], options[0]] = [options[0], options[answer]];
+      questions.push({ q: kind.prompt(fact), options, answer });
+    });
+  });
+
+  return questions;
 }
 
 // ---------- Helpers ----------

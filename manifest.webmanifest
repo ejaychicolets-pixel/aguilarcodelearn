@@ -1,0 +1,32 @@
+{
+  "id": "./index.html",
+  "name": "CodeLearn - Learn to Code Step by Step",
+  "short_name": "CodeLearn",
+  "description": "Learn JavaScript, Python, HTML, CSS, and C++ with interactive lessons and quizzes.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f0efff",
+  "theme_color": "#f0efff",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

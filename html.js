@@ -18,6 +18,7 @@ window.LESSON_TRACKS.html = {
     <a href="https://www.example.com">Visit a website</a>
   </body>
 </html>`,
+      exampleResult: "A page with a large heading, a paragraph, and a clickable link.",
       exercise: {
         prompt: "Create a page with an <code>h1</code> heading that says <em>About Me</em>, a paragraph about yourself, and an unordered list (<code>ul</code> with <code>li</code> items) of 3 hobbies.",
         starter: `<!DOCTYPE html>\n<html>\n  <body>\n    \n  </body>\n</html>`,
@@ -46,6 +47,7 @@ window.LESSON_TRACKS.html = {
       example: `<h2>My Favorite Links</h2>
 <img src="https://placehold.co/200x120" alt="A grey placeholder box">
 <p><a href="https://developer.mozilla.org">Learn more on MDN</a></p>`,
+      exampleResult: "A heading, a placeholder image with alternative text, and a link to MDN.",
       exercise: {
         prompt: "Add a link to <code>https://www.wikipedia.org</code> with the text <em>Wikipedia</em>, and an image from <code>https://placehold.co/150x100</code> with a meaningful alt text.",
         starter: `<h2>Resources</h2>\n`,
@@ -62,6 +64,68 @@ window.LESSON_TRACKS.html = {
         { q: "Which attribute holds the image file location?", options: ["href", "alt", "src", "link"], answer: 2 },
         { q: "Which attribute holds the link destination?", options: ["src", "href", "url", "target"], answer: 1 },
       ],
+    },
+    {
+      id: "html-3-forms",
+      title: "3. Forms and user input",
+      level: "Intermediate",
+      summary: "Collect useful input with labels, controls, and validation attributes.",
+      explain: `
+        <p>A <code>&lt;form&gt;</code> groups controls for submitting information. Each input should have a visible <code>&lt;label&gt;</code> connected by matching <code>for</code> and <code>id</code> values.</p>
+        <p>Choose an input type that matches the data, such as <code>email</code>. The <code>required</code> attribute asks the browser to check that a value was supplied.</p>`,
+      example: `<form>
+  <label for="email">Email address</label>
+  <input id="email" name="email" type="email" required>
+  <button type="submit">Join the club</button>
+</form>`,
+      exampleResult: "A labeled email field and submit button. The browser asks for a valid email before submitting.",
+      exercise: {
+        prompt: "Build a form with a label connected to a required email input and a submit button.",
+        starter: `<form>\n  <!-- Add a labeled email input and submit button -->\n</form>`,
+        hint: "Match label for=\"email\" with input id=\"email\"; set type=\"email\" and required.",
+        solution: `<form>\n  <label for="email">Email</label>\n  <input id="email" name="email" type="email" required>\n  <button type="submit">Send</button>\n</form>`,
+        check: (code) => {
+          const label = /<label[^>]*for="email"/i.test(code);
+          const input = /<input[^>]*id="email"[^>]*type="email"[^>]*required/i.test(code);
+          const button = /<button[^>]*type="submit"/i.test(code);
+          return label && input && button
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Connect a label to a required email input and include a submit button." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "html-4-semantic-accessibility",
+      title: "4. Semantic HTML and accessibility",
+      level: "Advanced",
+      summary: "Give page content meaning and make it work for more people.",
+      explain: `
+        <p>Semantic elements describe purpose: <code>&lt;nav&gt;</code> for navigation, <code>&lt;main&gt;</code> for the primary content, and <code>&lt;article&gt;</code> for a self-contained piece.</p>
+        <p>Use a logical heading order, descriptive link text, and useful <code>alt</code> text for informative images. Good HTML gives assistive technology a structure to navigate.</p>`,
+      example: `<header><h1>Garden Journal</h1></header>
+<nav aria-label="Main navigation"><a href="#tips">Growing tips</a></nav>
+<main>
+  <article>
+    <h2 id="tips">Start with sunlight</h2>
+    <img src="sunflower.jpg" alt="A sunflower growing in a pot">
+  </article>
+</main>`,
+      exampleResult: "A page with a named navigation region and a self-contained article under the main heading.",
+      exercise: {
+        prompt: "Create a main region containing an article with a heading and an informative image with meaningful alt text.",
+        starter: `<main>\n  <!-- Add an article, heading, and image -->\n</main>`,
+        hint: "Use main > article > h2 and an img whose alt describes what the image shows.",
+        solution: `<main>\n  <article>\n    <h2>My garden</h2>\n    <img src="garden.jpg" alt="Tomatoes growing on a sunny balcony">\n  </article>\n</main>`,
+        check: (code) => {
+          const structure = /<main>[\s\S]*<article>[\s\S]*<h[1-6][^>]*>[\s\S]*<\/article>[\s\S]*<\/main>/i.test(code);
+          const image = /<img[^>]*alt="[^"]{8,}"/i.test(code);
+          return structure && image
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Nest an article in main, add a heading, and describe the image in alt text." };
+        },
+      },
+      quiz: [],
     },
   ],
 };

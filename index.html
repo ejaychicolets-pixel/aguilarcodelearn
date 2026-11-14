@@ -4,21 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CodeLearn - Learn to Code Step by Step</title>
+  <meta name="theme-color" content="#f0efff">
+  <meta name="description" content="Learn JavaScript, Python, HTML, CSS, and C++ with interactive lessons and quizzes.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">CodeLearn</div>
+    <a class="brand" href="#" aria-label="CodeLearn home">
+      <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+      <span>CodeLearn<span class="brand-period">.</span></span>
+    </a>
     <nav id="language-tabs" class="language-tabs"></nav>
     <div class="progress-wrap">
+      <span class="progress-label">YOUR JOURNEY</span>
       <span id="progress-text">0% complete</span>
       <div class="progress-bar"><div id="progress-fill"></div></div>
     </div>
+    <button class="install-button" type="button" id="install-app">Install app</button>
   </header>
+  <p class="app-status" id="app-status" aria-live="polite"></p>
 
   <div class="layout">
     <aside class="sidebar">
-      <h2 id="track-title">Track</h2>
+      <div class="sidebar-heading">
+        <span class="sidebar-kicker">YOUR CLASSROOM</span>
+        <h2 id="track-title">Track</h2>
+      </div>
       <ol id="lesson-list" class="lesson-list"></ol>
     </aside>
 
@@ -27,11 +41,29 @@
     </main>
   </div>
 
-  <script src="lessons/javascript.js"></script>
-  <script src="lessons/python.js"></script>
-  <script src="lessons/html.js"></script>
-  <script src="lessons/css.js"></script>
-  <script src="lessons/cpp.js"></script>
+  <dialog class="install-dialog" id="install-help" aria-labelledby="install-title">
+    <form method="dialog">
+      <button class="dialog-close" aria-label="Close">×</button>
+    </form>
+    <span class="sidebar-kicker">TAKE IT WITH YOU</span>
+    <h2 id="install-title">Install CodeLearn</h2>
+    <p>Add CodeLearn to your home screen or desktop for an app-like experience. First open the site while connected so its lessons can be saved for offline use.</p>
+    <ul>
+      <li><strong>Android / Chrome:</strong> open the browser menu and tap <em>Install app</em> or <em>Add to Home screen</em>.</li>
+      <li><strong>iPhone / iPad:</strong> in Safari, tap Share, then <em>Add to Home Screen</em>.</li>
+      <li><strong>Desktop:</strong> use the install icon in the address bar, or choose <em>Install CodeLearn</em> from the browser menu.</li>
+    </ul>
+    <p class="install-note">The site must be hosted on HTTPS (or opened through localhost) for installation and offline caching. Running Python examples still requires an internet connection the first time.</p>
+    <form method="dialog"><button class="btn">Got it</button></form>
+  </dialog>
+
+  <script src="javascript.js"></script>
+  <script src="python.js"></script>
+  <script src="html.js"></script>
+  <script src="css.js"></script>
+  <script src="cpp.js"></script>
+  <script src="quizzes.js"></script>
   <script src="app.js"></script>
+  <script src="pwa.js"></script>
 </body>
 </html>

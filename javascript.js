@@ -15,6 +15,8 @@ window.LESSON_TRACKS.javascript = {
 const age = 17;
 console.log("Hello,", name);
 console.log("Age next year:", age + 1);`,
+      exampleResult: `Hello, Maria
+Age next year: 18`,
       exercise: {
         prompt: "Create a variable called <code>city</code> holding your city name, then print: <code>I live in ...</code> using that variable.",
         starter: `// Write your code below\n`,
@@ -46,6 +48,11 @@ console.log("Age next year:", age + 1);`,
     console.log(i, "is odd");
   }
 }`,
+      exampleResult: `1 is odd
+2 is even
+3 is odd
+4 is even
+5 is odd`,
       exercise: {
         prompt: "Use a loop to print the numbers 1 to 10, and print <code>FizzBuzz</code> instead of any number divisible by 3.",
         starter: `// Write your loop below\n`,
@@ -77,6 +84,8 @@ console.log("Age next year:", age + 1);`,
 
 console.log(add(2, 3));
 console.log(add(10, 20));`,
+      exampleResult: `5
+30`,
       exercise: {
         prompt: "Write a function called <code>square</code> that takes a number and returns that number multiplied by itself. Then print <code>square(7)</code>.",
         starter: `// Write your function below\n`,
@@ -94,6 +103,78 @@ console.log(add(10, 20));`,
         { q: "What does return do?", options: ["Prints a value", "Sends a value back from the function", "Restarts the program", "Deletes a variable"], answer: 1 },
         { q: "In function add(a, b), what are a and b?", options: ["Results", "Parameters", "Loops", "Strings"], answer: 1 },
       ],
+    },
+    {
+      id: "js-4-dom-events",
+      title: "4. DOM events and state",
+      level: "Intermediate",
+      summary: "Select page elements, respond to clicks, and update the interface.",
+      explain: `
+        <p>The DOM is the browser's object model for HTML. Use <code>querySelector()</code> to find an element and <code>addEventListener()</code> to respond to events.</p>
+        <p>Update visible text with <code>textContent</code>. Keeping state in a variable and rendering it after an event makes small interfaces predictable.</p>`,
+      example: `const button = document.querySelector("#count-button");
+const output = document.querySelector("#count");
+let count = 0;
+
+button.addEventListener("click", () => {
+  count++;
+  output.textContent = count;
+});`,
+      exampleResult: "Clicking the button increases the number shown in #count by one.",
+      exercise: {
+        prompt: "Select #message and make a button change its text to \"Hello!\" when clicked.",
+        starter: `const button = document.querySelector("#greet");\n// Add a click listener\n`,
+        hint: "Select #message, then add a click listener to button that assigns message.textContent.",
+        solution: `const button = document.querySelector("#greet");\nconst message = document.querySelector("#message");\nbutton.addEventListener("click", () => {\n  message.textContent = "Hello!";\n});`,
+        check: (code) => {
+          const selects = /querySelector\(["']#message["']\)/.test(code);
+          const listener = /addEventListener\(["']click["']/.test(code);
+          const updates = /textContent\s*=\s*["']Hello!["']/.test(code);
+          return selects && listener && updates
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Select #message, listen for a click, and update its textContent." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "js-5-async",
+      title: "5. Promises and async/await",
+      level: "Advanced",
+      summary: "Work with results that arrive later without blocking the page.",
+      explain: `
+        <p>A <strong>Promise</strong> represents a value that may be available later. An <code>async</code> function always returns a Promise.</p>
+        <p>Use <code>await</code> inside an async function to wait for a Promise. Handle failures with <code>try/catch</code> and check HTTP responses before parsing them. This example uses a mock response so it works without a server.</p>`,
+      example: `async function loadUser() {
+  try {
+    const response = await Promise.resolve({
+      ok: true,
+      json: async () => ({ name: "Ada" })
+    });
+    if (!response.ok) throw new Error("Request failed");
+    const user = await response.json();
+    console.log(user.name);
+  } catch (error) {
+    console.log("Could not load user");
+  }
+}
+await loadUser();`,
+      exampleResult: "Ada",
+      exercise: {
+        prompt: "Write an async function that awaits Promise.resolve(7) and prints the resolved value.",
+        starter: `// Write your async function\n`,
+        hint: "Declare async function showValue(), await the promise inside it, then call console.log.",
+        solution: `async function showValue() {\n  const value = await Promise.resolve(7);\n  console.log(value);\n}\nshowValue();`,
+        check: (code) => {
+          const asyncFn = /async\s+function\s+showValue/.test(code);
+          const awaited = /await\s+Promise\.resolve\(7\)/.test(code);
+          const called = /showValue\(\)/.test(code) && /console\.log\(value\)/.test(code);
+          return asyncFn && awaited && called
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Use an async function, await the Promise, print its value, and call the function." };
+        },
+      },
+      quiz: [],
     },
   ],
 };
