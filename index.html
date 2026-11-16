@@ -6,10 +6,452 @@
   <title>CodeLearn - Learn to Code Step by Step</title>
   <meta name="theme-color" content="#f0efff">
   <meta name="description" content="Learn JavaScript, Python, HTML, CSS, and C++ with interactive lessons and quizzes.">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css">
+
+
+
+  <style>
+* { box-sizing: border-box; }
+
+:root {
+  color-scheme: light;
+  --bg: #f0efff;
+  --panel: rgba(255, 255, 255, 0.78);
+  --text: #282644;
+  --muted: #77758f;
+  --accent: #6b5ce7;
+  --accent-deep: #5545ca;
+  --accent-soft: #eeebff;
+  --mint: #52b99c;
+  --ok: #26866c;
+  --bad: #c14968;
+  --code-bg: #282641;
+  --code-text: #f1efff;
+  --border: rgba(105, 92, 178, 0.14);
+  --clay-shadow: 8px 8px 20px rgba(104, 92, 170, 0.12), -7px -7px 18px rgba(255, 255, 255, 0.86);
+  --soft-shadow: 4px 5px 12px rgba(92, 80, 154, 0.1), -3px -3px 9px rgba(255, 255, 255, 0.82);
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  background:
+    radial-gradient(ellipse at 9% 12%, rgba(255, 209, 222, 0.62), transparent 30rem),
+    radial-gradient(ellipse at 90% 20%, rgba(190, 235, 224, 0.65), transparent 34rem),
+    radial-gradient(ellipse at 64% 93%, rgba(255, 225, 184, 0.5), transparent 30rem),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+button { font: inherit; }
+button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 3px solid rgba(107, 92, 231, 0.42);
+  outline-offset: 3px;
+}
+
+.topbar {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  min-height: 76px;
+  padding: 0.8rem clamp(1rem, 4vw, 3.5rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(250, 249, 255, 0.73);
+  box-shadow: 0 6px 24px rgba(80, 70, 140, 0.06);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 850;
+  letter-spacing: -0.045em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 13px;
+  color: #fff;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.85rem;
+  background: linear-gradient(145deg, #897cf2, #6555d9);
+  box-shadow: 4px 5px 10px rgba(92, 79, 205, 0.25), inset 1px 1px 2px rgba(255,255,255,.55);
+}
+.brand-period { color: #ef9f70; }
+
+.language-tabs { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.language-tabs button {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: #64617d;
+  background: rgba(255,255,255,.62);
+  box-shadow: 2px 3px 8px rgba(80,70,140,.08);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 650;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.language-tabs button:hover { transform: translateY(-2px); box-shadow: var(--soft-shadow); }
+.language-tabs button.active {
+  border-color: rgba(255,255,255,.58);
+  color: #fff;
+  background: linear-gradient(135deg, #8173ed, #6555d9);
+  box-shadow: 0 5px 12px rgba(90, 75, 204, .25), inset 1px 1px 2px rgba(255,255,255,.35);
+}
+
+.progress-wrap {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 0.05rem 0.75rem;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.progress-label { grid-column: 1 / -1; color: #9692ad; font-size: 0.62rem; font-weight: 800; letter-spacing: .13em; }
+.progress-bar { width: 128px; height: 9px; overflow: hidden; border-radius: 999px; background: #e6e3f2; box-shadow: inset 2px 2px 4px rgba(90,80,140,.1); }
+#progress-fill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #66c6a9, #9bdc9a); transition: width .4s ease; }
+.download-button {
+  padding: .52rem .9rem;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #8173ed, #6555d9);
+  box-shadow: 0 4px 10px rgba(90,75,204,.18), inset 1px 1px 2px rgba(255,255,255,.35);
+  cursor: pointer;
+  font-size: .82rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.download-button:hover { transform: translateY(-1px); }
+.workspace-nav-button {
+  padding: .52rem .9rem;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #8173ed, #6555d9);
+  box-shadow: 0 4px 10px rgba(90,75,204,.18), inset 1px 1px 2px rgba(255,255,255,.35);
+  cursor: pointer;
+  font-size: .82rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.workspace-nav-button:hover { transform: translateY(-1px); }
+.app-status { margin: 0; padding: 0 .75rem; color: #77758f; text-align: center; font-size: .72rem; }
+.app-status:empty { display: none; }
+.install-dialog {
+  width: min(92vw, 520px);
+  max-height: 85vh;
+  overflow: auto;
+  padding: 1.6rem;
+  border: 1px solid rgba(255,255,255,.9);
+  border-radius: 23px;
+  color: var(--text);
+  background: rgba(250,249,255,.97);
+  box-shadow: 0 24px 70px rgba(46,39,91,.26);
+}
+.install-dialog::backdrop { background: rgba(39,35,68,.42); backdrop-filter: blur(5px); }
+.install-dialog h2 { margin: .25rem 0 .7rem; font-size: 1.5rem; letter-spacing: -.04em; }
+.install-dialog p, .install-dialog li { color: #626078; font-size: .91rem; }
+.install-dialog li + li { margin-top: .55rem; }
+.install-dialog ul { padding-left: 1.25rem; }
+.install-dialog .install-note { padding: .7rem .8rem; border-radius: 11px; background: #eeebff; font-size: .8rem; }
+.install-dialog form:first-child { position: absolute; top: .65rem; right: .75rem; }
+.dialog-close { border: 0; color: #77758f; background: transparent; cursor: pointer; font-size: 1.6rem; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 960px);
+  justify-content: center;
+  gap: clamp(1.25rem, 3vw, 2.8rem);
+  min-height: calc(100vh - 76px);
+  padding: 2.3rem clamp(1rem, 3vw, 2.8rem) 4rem;
+}
+.layout.quiz-mode { grid-template-columns: minmax(0, 960px); }
+.layout.quiz-mode .sidebar { display: none; }
+.layout.workspace-mode { grid-template-columns: minmax(0, 960px); }
+.layout.workspace-mode .sidebar { display: none; }
+.sidebar {
+  align-self: start;
+  padding: 1.35rem;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 26px;
+  background: rgba(255,255,255,.57);
+  box-shadow: var(--clay-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.sidebar-heading { padding: .2rem .25rem .75rem; }
+.sidebar-kicker { color: #9692ad; font-size: .62rem; font-weight: 850; letter-spacing: .14em; }
+.sidebar h2 { margin: .25rem 0 0; color: var(--text); font-size: 1.05rem; letter-spacing: -.025em; }
+.lesson-list { display: grid; gap: .28rem; margin: 0; padding: 0; list-style: none; }
+.lesson-list li {
+  position: relative;
+  padding: .62rem .75rem .62rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: #696780;
+  cursor: pointer;
+  font-size: .9rem;
+  transition: transform .16s ease, background .16s ease;
+}
+.lesson-list li:hover { transform: translateX(3px); background: rgba(255,255,255,.72); }
+.lesson-list li.active {
+  border-color: rgba(255,255,255,.85);
+  color: var(--accent-deep);
+  background: #eeebff;
+  box-shadow: inset 3px 0 #7668e9, 3px 4px 8px rgba(90,80,140,.08);
+  font-weight: 750;
+}
+.lesson-list li.done::before { content: "✓"; margin-right: .4rem; color: var(--ok); font-weight: 900; }
+
+.content { width: 100%; min-width: 0; max-width: 960px; padding: .65rem 0; }
+.content.view-enter-forward { animation: page-enter-forward .3s ease both; }
+.content.view-enter-back { animation: page-enter-back .3s ease both; }
+@keyframes page-enter-forward {
+  from { opacity: 0; transform: translateX(22px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes page-enter-back {
+  from { opacity: 0; transform: translateX(-22px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.content h1 { margin: 0; color: #302d50; font-size: clamp(1.8rem, 3.2vw, 2.55rem); line-height: 1.18; letter-spacing: -.055em; }
+.content h2 { margin-top: 2rem; color: #6254cd; font-size: 1.12rem; letter-spacing: -.02em; }
+.lesson-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.lesson-level { display: inline-flex; margin-bottom: .35rem; padding: .2rem .6rem; border-radius: 999px; color: #6254cd; background: rgba(238,235,255,.85); font-size: .65rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.lead { max-width: 680px; margin: .65rem 0 1.55rem; color: #77758f; font-size: 1.03rem; }
+.card {
+  margin-bottom: 1.2rem;
+  padding: clamp(1rem, 2.4vw, 1.55rem);
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: 22px;
+  background: rgba(255,255,255,.72);
+  box-shadow: var(--clay-shadow);
+  backdrop-filter: blur(13px);
+  -webkit-backdrop-filter: blur(13px);
+}
+.card > :first-child { margin-top: 0; }
+.card > :last-child { margin-bottom: 0; }
+.card p { color: #58566f; }
+@media (hover: hover) and (pointer: fine) {
+  .rainbow-words { cursor: default; }
+  .rainbow-word { transition: color .18s ease; }
+  .rainbow-words:hover .rainbow-word { color: hsl(var(--word-hue), 76%, 30%); }
+  .card pre .rainbow-words:hover .rainbow-word { color: hsl(var(--word-hue), 78%, 73%); }
+}
+.result-heading { margin: 1rem 0 .35rem; color: #78758d; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; }
+.example-result { min-height: 0; margin-top: 0; color: #c6f5df; }
+.example-result-note { margin: 0 0 .65rem; padding: .7rem .85rem; border: 1px solid rgba(105,92,178,.12); border-radius: 11px; color: #58566f; background: rgba(238,235,255,.55); font-size: .88rem; }
+
+pre, code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+pre {
+  overflow-x: auto;
+  margin: .55rem 0;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 15px;
+  color: var(--code-text);
+  background: linear-gradient(145deg, #302e50, #24233d);
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,.12), 3px 4px 9px rgba(50,45,91,.12);
+  font-size: .88rem;
+}
+:not(pre) > code { padding: .12rem .38rem; border-radius: 6px; color: #6656c8; background: #eeebff; font-size: .88em; }
+textarea.editor {
+  width: 100%;
+  min-height: 180px;
+  padding: 1rem;
+  border: 1px solid rgba(103,91,177,.18);
+  border-radius: 15px;
+  color: #f1efff;
+  background: #292741;
+  box-shadow: inset 3px 3px 8px rgba(0,0,0,.18), 2px 3px 9px rgba(50,45,91,.1);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: .92rem;
+  resize: vertical;
+  tab-size: 4;
+}
+.draft-status { margin: .35rem 0 0; color: var(--muted); font-size: .78rem; }
+.quiz-invite { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; }
+.quiz-invite h3 { margin: .2rem 0; color: #393653; font-size: 1.1rem; }
+.quiz-invite p { margin: .3rem 0 0; font-size: .9rem; }
+.quiz-invite-kicker { color: #9692ad; font-size: .65rem; font-weight: 850; letter-spacing: .12em; }
+.quiz-back { margin-bottom: 1.25rem; }
+.quiz-page-heading { margin-bottom: 1.3rem; }
+.quiz-page-heading .lead { margin-bottom: 0; }
+.quiz-progress { margin-bottom: 1rem; color: var(--muted); font-size: .85rem; font-weight: 700; }
+.quiz-progress-bar { height: 8px; margin-top: .45rem; overflow: hidden; border-radius: 999px; background: #e6e3f2; }
+.quiz-progress-fill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #66c6a9, #9bdc9a); transition: width .25s ease; }
+.btn-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .8rem; }
+button.btn {
+  padding: .62rem 1.05rem;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg, #8174ec, #6655d8);
+  box-shadow: 0 4px 10px rgba(90,75,204,.2), inset 1px 1px 2px rgba(255,255,255,.3);
+  cursor: pointer;
+  font-size: .9rem;
+  font-weight: 700;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+button.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 7px 14px rgba(90,75,204,.23); }
+button.btn.secondary { border-color: rgba(105,92,178,.15); color: #615b80; background: rgba(255,255,255,.72); box-shadow: var(--soft-shadow); }
+button.btn:disabled { opacity: .52; cursor: not-allowed; }
+.output {
+  min-height: 60px;
+  margin-top: .8rem;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  color: #c6f5df;
+  background: #25243d;
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,.13);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: .88rem;
+  white-space: pre-wrap;
+}
+.output.error { color: #ffc0cf; }
+.preview-frame { width: 100%; height: 260px; margin-top: .8rem; border: 1px solid rgba(105,92,178,.18); border-radius: 14px; background: #fff; }
+.feedback { margin-top: .65rem; font-weight: 750; }
+.feedback.ok { color: var(--ok); }
+.feedback.bad { color: var(--bad); }
+.quiz-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; margin-bottom: 1rem; }
+.quiz-item { min-width: 0; padding: .7rem; border: 1px solid rgba(105,92,178,.1); border-radius: 13px; background: rgba(255,255,255,.4); }
+.quiz-q { margin: 0 0 .45rem; color: #393653; font-size: .9rem; font-weight: 750; overflow-wrap: anywhere; }
+.quiz-opt { display: block; margin: .25rem 0; padding: .5rem .62rem; border: 1px solid rgba(105,92,178,.12); border-radius: 9px; background: rgba(255,255,255,.58); cursor: pointer; font-size: .84rem; overflow-wrap: anywhere; }
+.quiz-opt:hover { background: #f0edff; }
+.quiz-opt input { margin-right: .5rem; accent-color: var(--accent); }
+.nav-row { display: flex; justify-content: space-between; margin-top: 1.7rem; }
+details.hint { margin-top: .85rem; color: #686580; }
+details.hint summary { color: var(--accent-deep); cursor: pointer; font-weight: 750; }
+
+.project-library, .project-workspace { width: 100%; }
+.workspace-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.workspace-heading h1, .workspace-project-name h1 { margin: 0; }
+.workspace-heading .lead { margin-bottom: 1rem; }
+.workspace-toolbar { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1rem 0; }
+.workspace-toolbar.compact { justify-content: flex-end; margin: 0; }
+.workspace-status { min-height: 1.4rem; margin: .35rem 0 .8rem; color: var(--ok); font-size: .82rem; }
+.workspace-status.error { color: var(--bad); }
+.project-list { display: grid; gap: .75rem; }
+.project-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: 17px;
+  background: rgba(255,255,255,.72);
+  box-shadow: var(--soft-shadow);
+}
+.project-card h2 { margin: 0; color: #393653; font-size: 1rem; }
+.project-card p { margin: .2rem 0 0; color: var(--muted); font-size: .78rem; }
+.project-card-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.project-empty { padding: 1.4rem; border: 1px dashed rgba(105,92,178,.3); border-radius: 17px; color: var(--muted); text-align: center; }
+.workspace-note, .workspace-publish p { color: var(--muted); font-size: .82rem; }
+.workspace-editor-heading { display: flex; align-items: center; gap: 1rem; margin-bottom: .6rem; }
+.workspace-project-name { min-width: 0; flex: 1; }
+.workspace-project-name h1 { overflow-wrap: anywhere; font-size: clamp(1.35rem, 2.5vw, 2rem); }
+.workspace-shell {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  min-height: 440px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: 18px;
+  background: rgba(255,255,255,.7);
+  box-shadow: var(--clay-shadow);
+}
+.project-explorer { min-width: 0; padding: .75rem 0; border-right: 1px solid rgba(105,92,178,.13); }
+.explorer-heading { padding: .35rem .8rem .7rem; color: #9692ad; font-size: .65rem; font-weight: 850; letter-spacing: .13em; }
+.project-tree { display: grid; align-content: start; gap: .1rem; max-height: 520px; overflow: auto; }
+.project-tree-folder, .project-tree-file { min-width: 0; overflow: hidden; padding-top: .32rem; padding-right: .55rem; padding-bottom: .32rem; border: 0; color: #64617d; text-align: left; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; }
+.project-tree-folder { font-weight: 700; }
+.project-tree-file { width: 100%; background: transparent; cursor: pointer; }
+.project-tree-file:hover { background: rgba(238,235,255,.7); }
+.project-tree-file.active { color: var(--accent-deep); background: #eeebff; font-weight: 750; }
+.project-code-panel { display: flex; min-width: 0; flex-direction: column; background: #292741; }
+.project-file-tab { min-height: 2.3rem; padding: .45rem .8rem; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,.1); color: #c9c4e8; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, Consolas, monospace; font-size: .78rem; }
+.project-code-editor {
+  display: block;
+  width: 100%;
+  min-height: 435px;
+  flex: 1;
+  padding: 1rem;
+  border: 0;
+  border-radius: 0;
+  color: #f1efff;
+  background: transparent;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: .88rem;
+  line-height: 1.65;
+  resize: vertical;
+  tab-size: 4;
+  white-space: pre;
+}
+.project-code-editor[hidden], .project-binary-note[hidden], .project-empty-editor[hidden] { display: none; }
+.project-binary-note, .project-empty-editor { margin: auto; padding: 1.5rem; color: #c9c4e8; text-align: center; }
+.workspace-publish { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-top: .6rem; }
+.workspace-publish p { flex-basis: 100%; margin: .5rem 0 0; }
+.workspace-publish a { color: var(--accent-deep); font-size: .84rem; font-weight: 700; }
+.workspace-input-dialog { width: min(92vw, 460px); padding: 1.4rem; border: 1px solid rgba(255,255,255,.9); border-radius: 20px; color: var(--text); background: rgba(250,249,255,.98); box-shadow: 0 24px 70px rgba(46,39,91,.26); }
+.workspace-input-dialog::backdrop { background: rgba(39,35,68,.42); backdrop-filter: blur(5px); }
+.workspace-input-dialog form { display: grid; gap: .65rem; }
+.workspace-input-dialog h2 { margin: 0; color: var(--text); font-size: 1.25rem; }
+.workspace-input-dialog label { color: var(--muted); font-size: .82rem; font-weight: 700; }
+.workspace-input-dialog input { width: 100%; padding: .7rem .8rem; border: 1px solid rgba(105,92,178,.2); border-radius: 10px; color: var(--text); background: #fff; font: inherit; }
+.workspace-dialog-actions { display: flex; justify-content: flex-end; gap: .6rem; margin-top: .4rem; }
+
+@media (max-width: 900px) {
+  .topbar { gap: .8rem 1.2rem; }
+  .layout { grid-template-columns: 245px minmax(0, 1fr); gap: 1.25rem; padding-inline: 1.25rem; }
+  .sidebar { padding: 1rem; }
+}
+@media (max-width: 680px) {
+  .topbar { position: relative; gap: .75rem; padding: .75rem 1rem; }
+  .topbar { flex-wrap: wrap; }
+  .brand { margin-right: auto; }
+  .download-button { padding: .42rem .65rem; font-size: .74rem; }
+  .workspace-nav-button { padding: .42rem .65rem; font-size: .74rem; }
+  .language-tabs { order: 3; display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); width: 100%; }
+  .language-tabs button { min-width: 0; padding: .38rem .25rem; font-size: .8rem; }
+  .progress-wrap { grid-template-columns: auto; gap: 0; margin-left: 0; }
+  .progress-label, .progress-bar { display: none; }
+  .layout { grid-template-columns: minmax(0, 1fr); padding: 1.25rem 1rem 3rem; }
+  .sidebar { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .lesson-list { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
+  .content { padding-top: .35rem; }
+  .quiz-grid { grid-template-columns: minmax(0, 1fr); }
+  .quiz-invite { align-items: flex-start; flex-direction: column; }
+  .project-card, .workspace-editor-heading { align-items: stretch; flex-direction: column; }
+  .workspace-toolbar.compact { justify-content: flex-start; }
+  .workspace-shell { grid-template-columns: minmax(0, 1fr); }
+  .project-explorer { max-height: 190px; overflow: auto; border-right: 0; border-bottom: 1px solid rgba(105,92,178,.13); }
+  .project-tree { max-height: 130px; }
+  .project-code-editor { min-height: 320px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -18,14 +460,15 @@
       <span>CodeLearn<span class="brand-period">.</span></span>
     </a>
     <nav id="language-tabs" class="language-tabs"></nav>
+    <button class="workspace-nav-button" type="button" id="open-projects">Projects</button>
     <div class="progress-wrap">
       <span class="progress-label">YOUR JOURNEY</span>
       <span id="progress-text">0% complete</span>
       <div class="progress-bar"><div id="progress-fill"></div></div>
     </div>
-    <button class="install-button" type="button" id="install-app">Install app</button>
+    <button class="download-button" type="button" id="download-website">Download website</button>
   </header>
-  <p class="app-status" id="app-status" aria-live="polite"></p>
+
 
   <div class="layout">
     <aside class="sidebar">
@@ -41,29 +484,2345 @@
     </main>
   </div>
 
-  <dialog class="install-dialog" id="install-help" aria-labelledby="install-title">
-    <form method="dialog">
-      <button class="dialog-close" aria-label="Close">×</button>
-    </form>
-    <span class="sidebar-kicker">TAKE IT WITH YOU</span>
-    <h2 id="install-title">Install CodeLearn</h2>
-    <p>Add CodeLearn to your home screen or desktop for an app-like experience. First open the site while connected so its lessons can be saved for offline use.</p>
-    <ul>
-      <li><strong>Android / Chrome:</strong> open the browser menu and tap <em>Install app</em> or <em>Add to Home screen</em>.</li>
-      <li><strong>iPhone / iPad:</strong> in Safari, tap Share, then <em>Add to Home Screen</em>.</li>
-      <li><strong>Desktop:</strong> use the install icon in the address bar, or choose <em>Install CodeLearn</em> from the browser menu.</li>
-    </ul>
-    <p class="install-note">The site must be hosted on HTTPS (or opened through localhost) for installation and offline caching. Running Python examples still requires an internet connection the first time.</p>
-    <form method="dialog"><button class="btn">Got it</button></form>
-  </dialog>
 
-  <script src="javascript.js"></script>
-  <script src="python.js"></script>
-  <script src="html.js"></script>
-  <script src="css.js"></script>
-  <script src="cpp.js"></script>
-  <script src="quizzes.js"></script>
-  <script src="app.js"></script>
-  <script src="pwa.js"></script>
+
+  <script>
+window.LESSON_TRACKS = window.LESSON_TRACKS || {};
+window.LESSON_TRACKS.javascript = {
+  name: "JavaScript",
+  runner: "js",
+  lessons: [
+    {
+      id: "js-1-variables",
+      title: "1. Variables and printing",
+      summary: "Store values and show them on screen.",
+      explain: `
+        <p>A <strong>variable</strong> is a named box that holds a value. Use <code>let</code> for values that can change and <code>const</code> for values that stay the same.</p>
+        <p><code>console.log()</code> prints a value so you can see what your code is doing.</p>
+        <p>Text is written in quotes and called a <strong>string</strong>. Numbers need no quotes.</p>`,
+      example: `let name = "Maria";
+const age = 17;
+console.log("Hello,", name);
+console.log("Age next year:", age + 1);`,
+      exampleResult: `Hello, Maria
+Age next year: 18`,
+      exercise: {
+        prompt: "Create a variable called <code>city</code> holding your city name, then print: <code>I live in ...</code> using that variable.",
+        starter: `// Write your code below\n`,
+        hint: "Create the variable with let or const, then call console.log with the text and the variable separated by a comma.",
+        solution: `const city = "Manila";\nconsole.log("I live in", city);`,
+        check: (code) => {
+          const hasVar = /(let|const|var)\s+city\s*=/.test(code);
+          const hasLog = /console\.log\(/.test(code) && /city/.test(code.split("console.log")[1] || "");
+          if (hasVar && hasLog) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Make sure you declare city with let or const and print it with console.log." };
+        },
+      },
+      quiz: [
+        { q: "Which keyword creates a value that should never change?", options: ["var", "let", "const", "print"], answer: 2 },
+        { q: "What does console.log(5 + 2) print?", options: ["52", "7", "5 + 2", "Error"], answer: 1 },
+      ],
+    },
+    {
+      id: "js-2-conditions-loops",
+      title: "2. Conditions and loops",
+      summary: "Make decisions and repeat actions.",
+      explain: `
+        <p><code>if</code> runs code only when a condition is true. <code>else</code> runs when it is false.</p>
+        <p>A <strong>for loop</strong> repeats code a set number of times. Each pass is called an iteration.</p>`,
+      example: `for (let i = 1; i <= 5; i++) {
+  if (i % 2 === 0) {
+    console.log(i, "is even");
+  } else {
+    console.log(i, "is odd");
+  }
+}`,
+      exampleResult: `1 is odd
+2 is even
+3 is odd
+4 is even
+5 is odd`,
+      exercise: {
+        prompt: "Use a loop to print the numbers 1 to 10, and print <code>FizzBuzz</code> instead of any number divisible by 3.",
+        starter: `// Write your loop below\n`,
+        hint: "Use a for loop from 1 to 10. Inside, check i % 3 === 0 first, then print the number otherwise.",
+        solution: `for (let i = 1; i <= 10; i++) {\n  if (i % 3 === 0) {\n    console.log("FizzBuzz");\n  } else {\n    console.log(i);\n  }\n}`,
+        check: (code) => {
+          const hasLoop = /for\s*\(/.test(code);
+          const hasModulo = /%\s*3/.test(code);
+          const hasFizz = /FizzBuzz/.test(code);
+          if (hasLoop && hasModulo && hasFizz) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Use a for loop, check % 3, and print FizzBuzz for those numbers." };
+        },
+      },
+      quiz: [
+        { q: "What does the % operator give you?", options: ["The quotient", "The remainder", "A percentage", "The square root"], answer: 1 },
+        { q: "How many times does for (let i = 0; i < 3; i++) run?", options: ["2", "3", "4", "Forever"], answer: 1 },
+      ],
+    },
+    {
+      id: "js-3-functions",
+      title: "3. Functions",
+      summary: "Package code into reusable blocks.",
+      explain: `
+        <p>A <strong>function</strong> is a named set of steps. You define it once and call it as many times as you like.</p>
+        <p>Functions can take <strong>parameters</strong> (inputs) and send back a result with <code>return</code>.</p>`,
+      example: `function add(a, b) {
+  return a + b;
+}
+
+console.log(add(2, 3));
+console.log(add(10, 20));`,
+      exampleResult: `5
+30`,
+      exercise: {
+        prompt: "Write a function called <code>square</code> that takes a number and returns that number multiplied by itself. Then print <code>square(7)</code>.",
+        starter: `// Write your function below\n`,
+        hint: "Use the function keyword, a parameter, and return n * n.",
+        solution: `function square(n) {\n  return n * n;\n}\nconsole.log(square(7));`,
+        check: (code) => {
+          const hasFn = /function\s+square\s*\(/.test(code) || /square\s*=\s*\(/.test(code);
+          const hasReturn = /return/.test(code);
+          const callsIt = /square\(7\)/.test(code);
+          if (hasFn && hasReturn && callsIt) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Define square, use return, and call square(7) with console.log." };
+        },
+      },
+      quiz: [
+        { q: "What does return do?", options: ["Prints a value", "Sends a value back from the function", "Restarts the program", "Deletes a variable"], answer: 1 },
+        { q: "In function add(a, b), what are a and b?", options: ["Results", "Parameters", "Loops", "Strings"], answer: 1 },
+      ],
+    },
+    {
+      id: "js-4-dom-events",
+      title: "4. DOM events and state",
+      level: "Intermediate",
+      summary: "Select page elements, respond to clicks, and update the interface.",
+      explain: `
+        <p>The DOM is the browser's object model for HTML. Use <code>querySelector()</code> to find an element and <code>addEventListener()</code> to respond to events.</p>
+        <p>Update visible text with <code>textContent</code>. Keeping state in a variable and rendering it after an event makes small interfaces predictable.</p>`,
+      example: `const button = document.querySelector("#count-button");
+const output = document.querySelector("#count");
+let count = 0;
+
+button.addEventListener("click", () => {
+  count++;
+  output.textContent = count;
+});`,
+      exampleResult: "Clicking the button increases the number shown in #count by one.",
+      exercise: {
+        prompt: "Select #message and make a button change its text to \"Hello!\" when clicked.",
+        starter: `const button = document.querySelector("#greet");\n// Add a click listener\n`,
+        hint: "Select #message, then add a click listener to button that assigns message.textContent.",
+        solution: `const button = document.querySelector("#greet");\nconst message = document.querySelector("#message");\nbutton.addEventListener("click", () => {\n  message.textContent = "Hello!";\n});`,
+        check: (code) => {
+          const selects = /querySelector\(["']#message["']\)/.test(code);
+          const listener = /addEventListener\(["']click["']/.test(code);
+          const updates = /textContent\s*=\s*["']Hello!["']/.test(code);
+          return selects && listener && updates
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Select #message, listen for a click, and update its textContent." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "js-5-async",
+      title: "5. Promises and async/await",
+      level: "Advanced",
+      summary: "Work with results that arrive later without blocking the page.",
+      explain: `
+        <p>A <strong>Promise</strong> represents a value that may be available later. An <code>async</code> function always returns a Promise.</p>
+        <p>Use <code>await</code> inside an async function to wait for a Promise. Handle failures with <code>try/catch</code> and check HTTP responses before parsing them. This example uses a mock response so it works without a server.</p>`,
+      example: `async function loadUser() {
+  try {
+    const response = await Promise.resolve({
+      ok: true,
+      json: async () => ({ name: "Ada" })
+    });
+    if (!response.ok) throw new Error("Request failed");
+    const user = await response.json();
+    console.log(user.name);
+  } catch (error) {
+    console.log("Could not load user");
+  }
+}
+await loadUser();`,
+      exampleResult: "Ada",
+      exercise: {
+        prompt: "Write an async function that awaits Promise.resolve(7) and prints the resolved value.",
+        starter: `// Write your async function\n`,
+        hint: "Declare async function showValue(), await the promise inside it, then call console.log.",
+        solution: `async function showValue() {\n  const value = await Promise.resolve(7);\n  console.log(value);\n}\nshowValue();`,
+        check: (code) => {
+          const asyncFn = /async\s+function\s+showValue/.test(code);
+          const awaited = /await\s+Promise\.resolve\(7\)/.test(code);
+          const called = /showValue\(\)/.test(code) && /console\.log\(value\)/.test(code);
+          return asyncFn && awaited && called
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Use an async function, await the Promise, print its value, and call the function." };
+        },
+      },
+      quiz: [],
+    },
+  ],
+};
+
+window.LESSON_TRACKS = window.LESSON_TRACKS || {};
+window.LESSON_TRACKS.python = {
+  name: "Python",
+  runner: "python",
+  lessons: [
+    {
+      id: "py-1-variables",
+      title: "1. Variables and print",
+      summary: "Python reads almost like English, which makes it a good first language.",
+      explain: `
+        <p>A <strong>variable</strong> stores a value. In Python you just write the name, an equals sign, and the value. No keyword is needed.</p>
+        <p><code>print()</code> shows a value on screen. Text goes in quotes; numbers do not.</p>`,
+      example: `name = "Maria"
+age = 17
+print("Hello,", name)
+print("Age next year:", age + 1)`,
+      exampleResult: `Hello, Maria
+Age next year: 18`,
+      exercise: {
+        prompt: "Create a variable called <code>city</code> with your city name, then print <code>I live in ...</code> using it.",
+        starter: `# Write your code below\n`,
+        hint: "Write city = \"...\" and then print with a comma between the text and the variable.",
+        solution: `city = "Manila"\nprint("I live in", city)`,
+        check: (code) => {
+          const hasVar = /^\s*city\s*=/m.test(code);
+          const hasPrint = /print\(/.test(code) && /city/.test(code.split("print")[1] || "");
+          if (hasVar && hasPrint) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Assign city = \"...\" and print it with print()." };
+        },
+      },
+      quiz: [
+        { q: "How do you create a variable in Python?", options: ["let x = 5", "var x = 5", "x = 5", "int x = 5"], answer: 2 },
+        { q: "What does print(\"5\" + \"2\") show?", options: ["7", "52", "Error", "5 + 2"], answer: 1 },
+      ],
+    },
+    {
+      id: "py-2-loops-conditions",
+      title: "2. Conditions and loops",
+      summary: "Indentation matters in Python: it marks which code belongs to which block.",
+      explain: `
+        <p>Python uses <strong>indentation</strong> (spaces at the start of a line) instead of braces. Keep blocks lined up.</p>
+        <p><code>if</code> checks a condition. <code>for</code> loops over a sequence like a list or <code>range()</code>.</p>`,
+      example: `for i in range(1, 6):
+    if i % 2 == 0:
+        print(i, "is even")
+    else:
+        print(i, "is odd")`,
+      exampleResult: `1 is odd
+2 is even
+3 is odd
+4 is even
+5 is odd`,
+      exercise: {
+        prompt: "Use a loop to print the numbers 1 to 10. Print <code>FizzBuzz</code> instead of any number divisible by 3.",
+        starter: `# Write your loop below\n`,
+        hint: "Use for i in range(1, 11): and check i % 3 == 0 first.",
+        solution: `for i in range(1, 11):\n    if i % 3 == 0:\n        print("FizzBuzz")\n    else:\n        print(i)`,
+        check: (code) => {
+          const hasLoop = /for\s+\w+\s+in\s+range\(/.test(code);
+          const hasMod = /%\s*3/.test(code);
+          const hasFizz = /FizzBuzz/.test(code);
+          if (hasLoop && hasMod && hasFizz) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Use a for loop with range, check % 3, and print FizzBuzz." };
+        },
+      },
+      quiz: [
+        { q: "What does range(3) produce?", options: ["1, 2, 3", "0, 1, 2", "0, 1, 2, 3", "3, 3, 3"], answer: 1 },
+        { q: "How does Python mark a block of code?", options: ["Curly braces", "Semicolons", "Indentation", "BEGIN and END"], answer: 2 },
+      ],
+    },
+    {
+      id: "py-3-lists-functions",
+      title: "3. Lists and functions",
+      summary: "Store many values and reuse code with functions.",
+      explain: `
+        <p>A <strong>list</strong> holds several values in order, written with square brackets. Use <code>len()</code> for its length and <code>.append()</code> to add an item.</p>
+        <p>Define a function with <code>def</code> and send a result back with <code>return</code>.</p>`,
+      example: `scores = [88, 92, 75]
+scores.append(95)
+print("Count:", len(scores))
+
+def average(values):
+    return sum(values) / len(values)
+
+print("Average:", average(scores))`,
+      exampleResult: `Count: 4
+Average: 87.5`,
+      exercise: {
+        prompt: "Write a function <code>largest(numbers)</code> that returns the biggest number in a list. Test it with <code>[3, 9, 2]</code>.",
+        starter: `# Write your function below\n`,
+        hint: "Python has a built-in max() function. You can return max(numbers).",
+        solution: `def largest(numbers):\n    return max(numbers)\n\nprint(largest([3, 9, 2]))`,
+        check: (code) => {
+          const hasDef = /def\s+largest\s*\(/.test(code);
+          const hasReturn = /return/.test(code);
+          const testsIt = /largest\(\s*\[3,\s*9,\s*2\]\s*\)/.test(code);
+          if (hasDef && hasReturn && testsIt) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Define largest with def, return the result, and test it with [3, 9, 2]." };
+        },
+      },
+      quiz: [
+        { q: "Which brackets make a list?", options: ["( )", "{ }", "[ ]", "< >"], answer: 2 },
+        { q: "Which keyword defines a function in Python?", options: ["function", "def", "func", "fn"], answer: 1 },
+      ],
+    },
+    {
+      id: "py-4-dictionaries",
+      title: "4. Dictionaries and data",
+      level: "Intermediate",
+      summary: "Store related information under meaningful keys and process it safely.",
+      explain: `
+        <p>A dictionary maps unique keys to values. Use <code>record["name"]</code> to read a value and <code>get()</code> when a key may be missing.</p>
+        <p>Loop through <code>.items()</code> to get keys and values together. Choose a clear structure before writing the processing logic.</p>`,
+      example: `scores = {"Mia": 92, "Leo": 85}
+for name, score in scores.items():
+    print(f"{name}: {score}")
+
+print("Unknown:", scores.get("Sam", 0))`,
+      exampleResult: `Mia: 92
+Leo: 85
+Unknown: 0`,
+      exercise: {
+        prompt: "Create a dictionary with an \"apples\" key set to 3, then safely print the value for \"oranges\" using a default of 0.",
+        starter: `# Create your dictionary and read its values\n`,
+        hint: "Use inventory = {\"apples\": 3}, then inventory.get(\"oranges\", 0).",
+        solution: `inventory = {"apples": 3}\nprint(inventory.get("oranges", 0))`,
+        check: (code) => {
+          const entry = /["']apples["']\s*:\s*3/.test(code);
+          const safeRead = /\.get\(["']oranges["']\s*,\s*0\)/.test(code);
+          return entry && safeRead
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Add apples: 3 to a dictionary and use get(\"oranges\", 0)." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "py-5-classes-errors",
+      title: "5. Classes and error handling",
+      level: "Advanced",
+      summary: "Model related data and behavior, and handle expected failures.",
+      explain: `
+        <p>A class describes objects with shared data and behavior. <code>__init__</code> initializes an object, and <code>self</code> refers to that instance.</p>
+        <p>Use <code>try/except</code> around operations that can fail. Catch the specific error you expect instead of hiding every possible problem.</p>`,
+      example: `class Temperature:
+    def __init__(self, celsius):
+        self.celsius = celsius
+
+    def fahrenheit(self):
+        return self.celsius * 9 / 5 + 32
+
+try:
+    print(Temperature(20).fahrenheit())
+except TypeError:
+    print("Use a number")`,
+      exampleResult: `68.0`,
+      exercise: {
+        prompt: "Define a class Counter initialized with a value, then add a method increment that increases its value by one.",
+        starter: `class Counter:\n    # Add initialization and increment\n    pass\n`,
+        hint: "Set self.value in __init__(self, value); increment should assign self.value += 1.",
+        solution: `class Counter:\n    def __init__(self, value):\n        self.value = value\n\n    def increment(self):\n        self.value += 1`,
+        check: (code) => {
+          const cls = /class\s+Counter\s*:/i.test(code);
+          const init = /def\s+__init__\s*\(\s*self\s*,\s*value\s*\)/.test(code);
+          const method = /def\s+increment\s*\(\s*self\s*\)/.test(code);
+          const update = /self\.value\s*\+=\s*1/.test(code);
+          return cls && init && method && update
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Define Counter, initialize self.value, and increment it in a method." };
+        },
+      },
+      quiz: [],
+    },
+  ],
+};
+
+window.LESSON_TRACKS = window.LESSON_TRACKS || {};
+window.LESSON_TRACKS.html = {
+  name: "HTML",
+  runner: "html",
+  lessons: [
+    {
+      id: "html-1-structure",
+      title: "1. Page structure",
+      summary: "Every web page is built from tags.",
+      explain: `
+        <p><strong>HTML</strong> describes the content of a web page. It uses <strong>tags</strong> in angle brackets. Most tags come in pairs: an opening <code>&lt;p&gt;</code> and a closing <code>&lt;/p&gt;</code>.</p>
+        <p><code>&lt;h1&gt;</code> is the biggest heading. <code>&lt;p&gt;</code> is a paragraph. <code>&lt;a href="..."&gt;</code> makes a link.</p>`,
+      example: `<!DOCTYPE html>
+<html>
+  <body>
+    <h1>My First Page</h1>
+    <p>This is a paragraph.</p>
+    <a href="https://www.example.com">Visit a website</a>
+  </body>
+</html>`,
+      exampleResult: "A page with a large heading, a paragraph, and a clickable link.",
+      exercise: {
+        prompt: "Create a page with an <code>h1</code> heading that says <em>About Me</em>, a paragraph about yourself, and an unordered list (<code>ul</code> with <code>li</code> items) of 3 hobbies.",
+        starter: `<!DOCTYPE html>\n<html>\n  <body>\n    \n  </body>\n</html>`,
+        hint: "Put the heading and paragraph inside body. A list needs <ul> around the <li> items.",
+        solution: `<!DOCTYPE html>\n<html>\n  <body>\n    <h1>About Me</h1>\n    <p>I am a student learning to code.</p>\n    <ul>\n      <li>Reading</li>\n      <li>Music</li>\n      <li>Football</li>\n    </ul>\n  </body>\n</html>`,
+        check: (code) => {
+          const hasH1 = /<h1>\s*About Me\s*<\/h1>/i.test(code);
+          const hasP = /<p>[\s\S]*?<\/p>/i.test(code);
+          const hasList = /<ul>[\s\S]*<li>[\s\S]*<li>[\s\S]*<li>[\s\S]*<\/ul>/i.test(code);
+          if (hasH1 && hasP && hasList) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Check for an h1 saying About Me, a p paragraph, and a ul with three li items." };
+        },
+      },
+      quiz: [
+        { q: "Which tag makes the largest heading?", options: ["<h6>", "<head>", "<h1>", "<title>"], answer: 2 },
+        { q: "What does a closing tag look like?", options: ["<p>", "</p>", "<p/>", "[p]"], answer: 1 },
+      ],
+    },
+    {
+      id: "html-2-images-links",
+      title: "2. Images and links",
+      summary: "Add pictures and connect pages together.",
+      explain: `
+        <p>The <code>&lt;img&gt;</code> tag shows an image. It needs a <code>src</code> (where the file is) and an <code>alt</code> (a description for screen readers and when the image fails to load).</p>
+        <p>The <code>&lt;a&gt;</code> tag links to another page. Its <code>href</code> is the destination.</p>`,
+      example: `<h2>My Favorite Links</h2>
+<img src="https://placehold.co/200x120" alt="A grey placeholder box">
+<p><a href="https://developer.mozilla.org">Learn more on MDN</a></p>`,
+      exampleResult: "A heading, a placeholder image with alternative text, and a link to MDN.",
+      exercise: {
+        prompt: "Add a link to <code>https://www.wikipedia.org</code> with the text <em>Wikipedia</em>, and an image from <code>https://placehold.co/150x100</code> with a meaningful alt text.",
+        starter: `<h2>Resources</h2>\n`,
+        hint: "Use <a href=\"...\">text</a> for links and <img src=\"...\" alt=\"...\"> for images.",
+        solution: `<h2>Resources</h2>\n<a href="https://www.wikipedia.org">Wikipedia</a>\n<img src="https://placehold.co/150x100" alt="Placeholder image">`,
+        check: (code) => {
+          const link = /<a\s+href="https:\/\/www\.wikipedia\.org"[^>]*>\s*Wikipedia\s*<\/a>/i.test(code);
+          const img = /<img\s+[^>]*src="https:\/\/placehold\.co\/150x100"[^>]*alt="[^"]+"/i.test(code);
+          if (link && img) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Check your link's href and text, and make sure the img has src and a non-empty alt." };
+        },
+      },
+      quiz: [
+        { q: "Which attribute holds the image file location?", options: ["href", "alt", "src", "link"], answer: 2 },
+        { q: "Which attribute holds the link destination?", options: ["src", "href", "url", "target"], answer: 1 },
+      ],
+    },
+    {
+      id: "html-3-forms",
+      title: "3. Forms and user input",
+      level: "Intermediate",
+      summary: "Collect useful input with labels, controls, and validation attributes.",
+      explain: `
+        <p>A <code>&lt;form&gt;</code> groups controls for submitting information. Each input should have a visible <code>&lt;label&gt;</code> connected by matching <code>for</code> and <code>id</code> values.</p>
+        <p>Choose an input type that matches the data, such as <code>email</code>. The <code>required</code> attribute asks the browser to check that a value was supplied.</p>`,
+      example: `<form>
+  <label for="email">Email address</label>
+  <input id="email" name="email" type="email" required>
+  <button type="submit">Join the club</button>
+</form>`,
+      exampleResult: "A labeled email field and submit button. The browser asks for a valid email before submitting.",
+      exercise: {
+        prompt: "Build a form with a label connected to a required email input and a submit button.",
+        starter: `<form>\n  <!-- Add a labeled email input and submit button -->\n</form>`,
+        hint: "Match label for=\"email\" with input id=\"email\"; set type=\"email\" and required.",
+        solution: `<form>\n  <label for="email">Email</label>\n  <input id="email" name="email" type="email" required>\n  <button type="submit">Send</button>\n</form>`,
+        check: (code) => {
+          const label = /<label[^>]*for="email"/i.test(code);
+          const input = /<input[^>]*id="email"[^>]*type="email"[^>]*required/i.test(code);
+          const button = /<button[^>]*type="submit"/i.test(code);
+          return label && input && button
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Connect a label to a required email input and include a submit button." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "html-4-semantic-accessibility",
+      title: "4. Semantic HTML and accessibility",
+      level: "Advanced",
+      summary: "Give page content meaning and make it work for more people.",
+      explain: `
+        <p>Semantic elements describe purpose: <code>&lt;nav&gt;</code> for navigation, <code>&lt;main&gt;</code> for the primary content, and <code>&lt;article&gt;</code> for a self-contained piece.</p>
+        <p>Use a logical heading order, descriptive link text, and useful <code>alt</code> text for informative images. Good HTML gives assistive technology a structure to navigate.</p>`,
+      example: `<header><h1>Garden Journal</h1></header>
+<nav aria-label="Main navigation"><a href="#tips">Growing tips</a></nav>
+<main>
+  <article>
+    <h2 id="tips">Start with sunlight</h2>
+    <img src="sunflower.jpg" alt="A sunflower growing in a pot">
+  </article>
+</main>`,
+      exampleResult: "A page with a named navigation region and a self-contained article under the main heading.",
+      exercise: {
+        prompt: "Create a main region containing an article with a heading and an informative image with meaningful alt text.",
+        starter: `<main>\n  <!-- Add an article, heading, and image -->\n</main>`,
+        hint: "Use main > article > h2 and an img whose alt describes what the image shows.",
+        solution: `<main>\n  <article>\n    <h2>My garden</h2>\n    <img src="garden.jpg" alt="Tomatoes growing on a sunny balcony">\n  </article>\n</main>`,
+        check: (code) => {
+          const structure = /<main>[\s\S]*<article>[\s\S]*<h[1-6][^>]*>[\s\S]*<\/article>[\s\S]*<\/main>/i.test(code);
+          const image = /<img[^>]*alt="[^"]{8,}"/i.test(code);
+          return structure && image
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Nest an article in main, add a heading, and describe the image in alt text." };
+        },
+      },
+      quiz: [],
+    },
+  ],
+};
+
+window.LESSON_TRACKS = window.LESSON_TRACKS || {};
+window.LESSON_TRACKS.css = {
+  name: "CSS",
+  runner: "html",
+  lessons: [
+    {
+      id: "css-1-selectors",
+      title: "1. Selectors and colors",
+      summary: "CSS styles HTML. A selector chooses what to style.",
+      explain: `
+        <p><strong>CSS</strong> controls how HTML looks. A rule has a <strong>selector</strong> (what to style) and <strong>declarations</strong> inside braces, like <code>color: red;</code>.</p>
+        <p>Selectors: <code>h1</code> picks every h1. <code>.box</code> picks elements with <code>class="box"</code>. <code>#main</code> picks the one element with <code>id="main"</code>.</p>
+        <p>The <code>&lt;style&gt;</code> element contains the CSS rules, and the HTML below it supplies the elements those rules select.</p>`,
+      example: `<style>
+  h1 { color: #4f46e5; }
+  .note { background: #fef9c3; padding: 10px; border-radius: 8px; }
+</style>
+<h1>Styled Heading</h1>
+<p class="note">This paragraph has a yellow box.</p>`,
+      exampleResult: "A purple heading and a rounded pale-yellow note with 10px of inner spacing.",
+      exercise: {
+        prompt: "Style a paragraph with the class <code>highlight</code> so its text is white, its background is dark blue (<code>#1e3a8a</code>), and it has 12px of padding.",
+        starter: `<style>\n  /* Write your CSS here */\n</style>\n<p class="highlight">Look at me!</p>`,
+        hint: "Use .highlight { ... } with color, background, and padding properties.",
+        solution: `<style>\n  .highlight {\n    color: white;\n    background: #1e3a8a;\n    padding: 12px;\n  }\n</style>\n<p class="highlight">Look at me!</p>`,
+        check: (code) => {
+          const sel = /\.highlight\s*\{[^}]*\}/.test(code);
+          const color = /color:\s*white/i.test(code);
+          const bg = /background(-color)?:\s*#1e3a8a/i.test(code);
+          const pad = /padding:\s*12px/i.test(code);
+          if (sel && color && bg && pad) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Your .highlight rule needs color: white, background: #1e3a8a, and padding: 12px." };
+        },
+      },
+      quiz: [
+        { q: "Which selector picks an element with class=\"card\"?", options: ["#card", ".card", "card", "*card"], answer: 1 },
+        { q: "Which selector picks the single element with id=\"header\"?", options: [".header", "header", "#header", "@header"], answer: 2 },
+      ],
+    },
+    {
+      id: "css-2-box-model-flex",
+      title: "2. Spacing and flexbox layout",
+      summary: "Control spacing and place items side by side.",
+      explain: `
+        <p><code>margin</code> is space outside an element. <code>padding</code> is space inside it, between the content and the border.</p>
+        <p>Flexbox lines up items in a row or column. Set <code>display: flex</code> on the parent, then use <code>gap</code> to space the children.</p>`,
+      example: `<style>
+  .row { display: flex; gap: 12px; }
+  .card { background: #eef0ff; padding: 16px; border-radius: 10px; flex: 1; }
+</style>
+<div class="row">
+  <div class="card">One</div>
+  <div class="card">Two</div>
+  <div class="card">Three</div>
+</div>`,
+      exampleResult: "Three equal-width pastel cards arranged in a row with even gaps.",
+      exercise: {
+        prompt: "Make three boxes (<code>div</code>) with the class <code>box</code> sit side by side using flexbox, with 10px of space between them.",
+        starter: `<style>\n  /* Write your CSS here */\n</style>\n<div class="wrap">\n  <div class="box">A</div>\n  <div class="box">B</div>\n  <div class="box">C</div>\n</div>`,
+        hint: "Set display: flex and gap: 10px on the .wrap container.",
+        solution: `<style>\n  .wrap { display: flex; gap: 10px; }\n  .box { background: #fde68a; padding: 16px; }\n</style>\n<div class="wrap">\n  <div class="box">A</div>\n  <div class="box">B</div>\n  <div class="box">C</div>\n</div>`,
+        check: (code) => {
+          const flex = /display:\s*flex/i.test(code);
+          const gap = /gap:\s*10px/i.test(code);
+          if (flex && gap) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Add display: flex and gap: 10px to the container (.wrap)." };
+        },
+      },
+      quiz: [
+        { q: "What is the space INSIDE an element's border called?", options: ["margin", "padding", "border", "gap"], answer: 1 },
+        { q: "Which property turns on flexbox?", options: ["display: flex", "flex: on", "layout: flex", "position: flex"], answer: 0 },
+      ],
+    },
+    {
+      id: "css-3-responsive-design",
+      title: "3. Responsive layouts",
+      level: "Intermediate",
+      summary: "Make the same HTML comfortable to read on phones and larger screens.",
+      explain: `
+        <p>Responsive CSS adapts layout to available space. Use flexible widths such as <code>width: min(100%, 42rem)</code> rather than a fixed page width.</p>
+        <p>A <code>@media</code> query applies rules only when its condition matches. Here a two-column grid becomes one column on narrow screens.</p>
+        <p>The <code>&lt;style&gt;</code> rules still select the HTML by class; only the layout changes at the breakpoint.</p>`,
+      example: `<style>
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.card { padding: 1rem; border-radius: 12px; background: #e9e7ff; }
+@media (max-width: 600px) {
+  .cards { grid-template-columns: 1fr; }
+}
+</style>
+<div class="cards">
+  <article class="card">Learn</article>
+  <article class="card">Practice</article>
+</div>`,
+      exampleResult: "Two cards side by side on wide screens; stacked cards on screens 600px wide or narrower.",
+      exercise: {
+        prompt: "Style the .cards container as a two-column grid, then switch to one column below 600px.",
+        starter: `<style>\n/* Add the grid and media query */\n</style>\n<div class="cards"><article>One</article><article>Two</article></div>`,
+        hint: "Use display: grid, grid-template-columns: repeat(2, 1fr), and a max-width: 600px media query.",
+        solution: `<style>\n.cards { display: grid; grid-template-columns: repeat(2, 1fr); }\n@media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }\n</style>\n<div class="cards"><article>One</article><article>Two</article></div>`,
+        check: (code) => {
+          const grid = /\.cards\s*\{[^}]*display:\s*grid/i.test(code);
+          const columns = /grid-template-columns:\s*repeat\(2,\s*1fr\)/i.test(code);
+          const query = /@media\s*\(max-width:\s*600px\)/i.test(code);
+          const mobile = /grid-template-columns:\s*1fr/i.test(code);
+          return grid && columns && query && mobile
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Add the two-column grid and a 600px media query that stacks it." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "css-4-grid-tokens",
+      title: "4. CSS Grid and design tokens",
+      level: "Advanced",
+      summary: "Build precise page layouts and keep shared styles easy to update.",
+      explain: `
+        <p>CSS Grid is useful for two-dimensional layouts. Define named columns with <code>grid-template-columns</code> and spacing with <code>gap</code>.</p>
+        <p>Custom properties (design tokens) are declared with <code>--name</code> and read with <code>var(--name)</code>. Put shared values on <code>:root</code> so many rules can reuse them.</p>
+        <p>In this example, semantic HTML provides the page regions while CSS Grid controls where they appear.</p>`,
+      example: `<style>
+:root { --ink: #29264b; --accent: #6b5ce7; }
+.page { display: grid; grid-template-columns: 12rem 1fr; gap: 1rem; color: var(--ink); }
+nav { background: var(--accent); color: white; padding: 1rem; }
+main { padding: 1rem; }
+</style>
+<div class="page"><nav>Topics</nav><main><h1>CSS Grid</h1><p>Reusable layout.</p></main></div>`,
+      exampleResult: "A purple navigation column beside a wider article, using reusable color tokens.",
+      exercise: {
+        prompt: "Create a --space token on :root and use it for the gap in a .layout grid with a sidebar and content column.",
+        starter: `<style>\n/* Define the token and grid */\n</style>\n<div class="layout"><aside>Menu</aside><main>Content</main></div>`,
+        hint: "Set --space: 1rem on :root; use grid-template-columns: 12rem 1fr and gap: var(--space).",
+        solution: `<style>\n:root { --space: 1rem; }\n.layout { display: grid; grid-template-columns: 12rem 1fr; gap: var(--space); }\n</style>\n<div class="layout"><aside>Menu</aside><main>Content</main></div>`,
+        check: (code) => {
+          const token = /--space\s*:\s*1rem/i.test(code);
+          const grid = /\.layout\s*\{[^}]*display:\s*grid/i.test(code);
+          const gap = /gap:\s*var\(--space\)/i.test(code);
+          return token && grid && gap
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Define --space on :root and use it as the gap in a .layout grid." };
+        },
+      },
+      quiz: [],
+    },
+  ],
+};
+
+window.LESSON_TRACKS = window.LESSON_TRACKS || {};
+window.LESSON_TRACKS.cpp = {
+  name: "C++",
+  runner: "cpp",
+  lessons: [
+    {
+      id: "cpp-1-hello",
+      title: "1. Hello, C++ and variables",
+      summary: "C++ is compiled, so you write code, build it, then run it.",
+      explain: `
+        <p>Every C++ program starts in <code>main()</code>. <code>#include &lt;iostream&gt;</code> brings in tools for input and output, and <code>std::cout</code> prints text.</p>
+        <p>You must declare a variable's type: <code>int</code> for whole numbers, <code>double</code> for decimals, <code>string</code> for text (with <code>#include &lt;string&gt;</code>).</p>`,
+      example: `      #include <iostream>
+      #include <string>
+      using namespace std;
+
+int main() {
+    string name = "Maria";
+    int age = 17;
+    cout << "Hello, " << name << endl;
+    cout << "Age next year: " << age + 1 << endl;
+    return 0;
+}`,
+      exampleResult: `Hello, Maria
+Age next year: 18`,
+      exercise: {
+        prompt: "Write a program that declares an <code>int</code> called <code>year</code> and prints <code>The year is 2026</code> using that variable.",
+        starter: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    return 0;\n}`,
+        hint: "Declare int year = 2026; then cout << \"The year is \" << year << endl;",
+        solution: `#include <iostream>\nusing namespace std;\n\nint main() {\n    int year = 2026;\n    cout << "The year is " << year << endl;\n    return 0;\n}`,
+        check: (code) => {
+          const hasVar = /int\s+year\s*=\s*2026\s*;/.test(code);
+          const hasCout = /cout\s*<</.test(code) && /year/.test(code.split("cout")[1] || "");
+          if (hasVar && hasCout) return { ok: true, message: "Correct! Lesson complete. Remember to compile it on your computer to see the output." };
+          return { ok: false, message: "Declare int year = 2026; and print it with cout." };
+        },
+      },
+      quiz: [
+        { q: "Which function is the program's starting point?", options: ["start()", "main()", "begin()", "run()"], answer: 1 },
+        { q: "Which type holds a whole number?", options: ["string", "double", "int", "text"], answer: 2 },
+      ],
+    },
+    {
+      id: "cpp-2-loops-functions",
+      title: "2. Loops and functions",
+      summary: "Repeat code and organize it into functions.",
+      explain: `
+        <p>C++ loops look like JavaScript loops. A <code>for</code> loop has three parts: start, condition, and step.</p>
+        <p>A function declares its return type first, such as <code>int</code>. It must be declared before <code>main()</code> uses it.</p>`,
+      example: `#include <iostream>
+using namespace std;
+
+int square(int n) {
+    return n * n;
+}
+
+int main() {
+    for (int i = 1; i <= 3; i++) {
+        cout << i << " squared is " << square(i) << endl;
+    }
+    return 0;
+}`,
+      exampleResult: `1 squared is 1
+2 squared is 4
+3 squared is 9`,
+      exercise: {
+        prompt: "Write a function <code>int add(int a, int b)</code> that returns the sum. Print <code>add(4, 5)</code> from main.",
+        starter: `#include <iostream>\nusing namespace std;\n\n// Write your function here\n\nint main() {\n    // Call it here\n    return 0;\n}`,
+        hint: "Return a + b from add, then call cout << add(4, 5) << endl; inside main.",
+        solution: `#include <iostream>\nusing namespace std;\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main() {\n    cout << add(4, 5) << endl;\n    return 0;\n}`,
+        check: (code) => {
+          const fn = /int\s+add\s*\(\s*int\s+\w+\s*,\s*int\s+\w+\s*\)/.test(code);
+          const ret = /return\s+\w+\s*\+\s*\w+\s*;/.test(code);
+          const calls = /add\(\s*4\s*,\s*5\s*\)/.test(code);
+          if (fn && ret && calls) return { ok: true, message: "Correct! Lesson complete." };
+          return { ok: false, message: "Define int add(int a, int b), return the sum, and call add(4, 5) in main." };
+        },
+      },
+      quiz: [
+        { q: "What does the middle part of a for loop check?", options: ["The start value", "The step", "The condition", "The return value"], answer: 2 },
+        { q: "What does a function declared as int square(int n) give back?", options: ["Nothing", "A string", "An integer", "A double"], answer: 2 },
+      ],
+    },
+    {
+      id: "cpp-3-vectors",
+      title: "3. Vectors and algorithms",
+      level: "Intermediate",
+      summary: "Store a changing number of values and process them with standard algorithms.",
+      explain: `
+        <p><code>std::vector</code> is a resizable sequence. Use <code>push_back()</code> to add items and range-based <code>for</code> loops to visit each one.</p>
+        <p>Include the standard headers you use. <code>std::accumulate</code> from <code>&lt;numeric&gt;</code> can combine a range into a total.</p>`,
+      example: `#include <iostream>
+#include <numeric>
+#include <vector>
+
+int main() {
+    std::vector<int> scores{80, 90, 100};
+    scores.push_back(95);
+    int total = std::accumulate(scores.begin(), scores.end(), 0);
+    std::cout << "Count: " << scores.size() << "\\n";
+    std::cout << "Total: " << total << "\\n";
+}`,
+      exampleResult: `Count: 4
+Total: 365`,
+      exercise: {
+        prompt: "Create a vector of integers, add 7 with push_back, and print the vector's size.",
+        starter: `#include <iostream>\n#include <vector>\n\nint main() {\n    // Create and update a vector\n}`,
+        hint: "Declare std::vector<int> values{2, 4}; then call values.push_back(7).",
+        solution: `#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> values{2, 4};\n    values.push_back(7);\n    std::cout << values.size() << "\\n";\n}`,
+        check: (code) => {
+          const vector = /vector\s*<\s*int\s*>/.test(code);
+          const push = /\.push_back\(\s*7\s*\)/.test(code);
+          const size = /\.size\(\)/.test(code);
+          return vector && push && size
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Use a vector<int>, push_back(7), and print its size()." };
+        },
+      },
+      quiz: [],
+    },
+    {
+      id: "cpp-4-classes-raii",
+      title: "4. Classes and resource safety",
+      level: "Advanced",
+      summary: "Encapsulate behavior and let object lifetimes manage resources.",
+      explain: `
+        <p>A class groups data and functions. Keep implementation details <code>private</code> and expose intentional operations with <code>public</code> methods.</p>
+        <p>RAII ties resource lifetime to object lifetime: acquire a resource in a constructor and release it in a destructor. Standard library types such as <code>std::vector</code> manage their own memory.</p>`,
+      example: `#include <iostream>
+#include <string>
+#include <utility>
+
+class Greeter {
+public:
+    explicit Greeter(std::string name) : name_(std::move(name)) {}
+    void greet() const { std::cout << "Hello, " << name_ << "\\n"; }
+private:
+    std::string name_;
+};
+
+int main() {
+    Greeter person("Ada");
+    person.greet();
+}`,
+      exampleResult: `Hello, Ada`,
+      exercise: {
+        prompt: "Create a class Box that stores a private integer value and exposes a public getValue() const method.",
+        starter: `class Box {\n    // Add private data and a public getter\n};`,
+        hint: "Put int value_ under private: and define int getValue() const under public:.",
+        solution: `class Box {\nprivate:\n    int value_;\npublic:\n    explicit Box(int value) : value_(value) {}\n    int getValue() const { return value_; }\n};`,
+        check: (code) => {
+          const cls = /class\s+Box\s*\{/.test(code);
+          const privateValue = /private\s*:[\s\S]*int\s+value_/.test(code);
+          const getter = /int\s+getValue\s*\(\s*\)\s*const/.test(code);
+          return cls && privateValue && getter
+            ? { ok: true, message: "Correct! Lesson complete." }
+            : { ok: false, message: "Add private value_ data and a public const getValue() method." };
+        },
+      },
+      quiz: [],
+    },
+  ],
+};
+
+function quizFacts(rows) {
+  return rows.map(([term, meaning, syntax, result, pitfall]) => ({
+    term, meaning, syntax, result, pitfall,
+  }));
+}
+
+window.LESSON_QUIZ_FACTS = {
+  "js-1-variables": quizFacts([
+    ["let", "declares a binding that may be reassigned", "let score = 4;", "score stores the number 4", "redeclaring the same let name in one block"],
+    ["const", "declares a binding that cannot be reassigned", "const maxLives = 3;", "maxLives continues to refer to 3", "assigning a new value to maxLives"],
+    ["string", "stores text as a sequence of characters", "const city = \"Manila\";", "city contains the text Manila", "leaving ordinary text without quotes"],
+    ["number", "stores a numeric value for arithmetic", "const age = 17;", "age + 1 evaluates to 18", "quoting a number when you intend arithmetic"],
+    ["console.log", "writes values to the developer console", "console.log(\"Hello\", name);", "Hello followed by the value of name is logged", "expecting console.log to update page content"],
+  ]),
+  "js-2-conditions-loops": quizFacts([
+    ["if", "runs a block only when its condition is true", "if (score >= 10) { console.log(\"Win\"); }", "Win is logged when score is at least 10", "using assignment instead of comparison in a condition"],
+    ["else", "runs when the preceding if condition is false", "if (ready) { start(); } else { wait(); }", "wait runs when ready is false", "placing else after an unrelated statement"],
+    ["for loop", "repeats a block while its condition remains true", "for (let i = 0; i < 3; i++) { console.log(i); }", "the loop logs 0, 1, and 2", "using a condition that never becomes false"],
+    ["modulo", "returns the remainder after division", "10 % 3", "the expression evaluates to 1", "treating % as a percentage operator"],
+    ["strict equality", "checks equality without converting operand types", "5 === \"5\"", "the comparison evaluates to false", "using loose equality when types should match"],
+  ]),
+  "js-3-functions": quizFacts([
+    ["function", "packages reusable statements behind a callable name", "function add(a, b) { return a + b; }", "add(2, 3) returns 5", "defining a function but never calling it"],
+    ["parameter", "names an input accepted by a function", "function greet(name) { return name; }", "name receives the argument passed to greet", "confusing a parameter with a returned value"],
+    ["return", "sends a result back to the caller", "function double(n) { return n * 2; }", "double(4) produces 8", "expecting code after return in the same function to run"],
+    ["arrow function", "is a concise function expression using an arrow", "const square = n => n * n;", "square(3) returns 9", "omitting braces when multiple statements are needed"],
+    ["default parameter", "provides an input value when an argument is omitted", "function greet(name = \"friend\") { return name; }", "greet() returns friend", "placing a required parameter after optional defaults"],
+  ]),
+  "js-4-dom-events": quizFacts([
+    ["DOM", "represents the page as objects JavaScript can inspect", "document.querySelector(\"#message\")", "the first element with id message is selected", "assuming the browser DOM exists in every JavaScript runtime"],
+    ["querySelector", "returns the first element matching a CSS selector", "document.querySelector(\".card\")", "the first element with class card is returned", "forgetting the dot for a class selector"],
+    ["click event", "signals that a user activated an element", "button.addEventListener(\"click\", save);", "save runs when button is clicked", "calling the handler immediately instead of passing it"],
+    ["textContent", "sets or reads an element's plain text", "message.textContent = \"Hello!\";", "the visible message becomes Hello!", "using innerHTML for untrusted text"],
+    ["state", "is data kept between interface updates", "let count = 0; count += 1;", "count becomes 1 after the increment", "changing the display without updating its source data"],
+  ]),
+  "js-5-async": quizFacts([
+    ["Promise", "represents a result that may become available later", "Promise.resolve(7)", "the Promise fulfills with 7", "treating the Promise object itself as its final value"],
+    ["async function", "always returns a Promise", "async function value() { return 7; }", "value() returns a Promise fulfilled with 7", "expecting an async function to return a plain value immediately"],
+    ["await", "waits for a Promise inside an async function", "const user = await response.json();", "user receives the parsed response body", "using await outside an async function without module top-level await"],
+    ["try/catch", "handles an exception thrown inside the try block", "try { run(); } catch (error) { report(error); }", "report runs if run throws", "catching an error and silently ignoring it"],
+    ["HTTP response check", "uses response.ok to detect unsuccessful status codes", "if (!response.ok) throw new Error(\"Request failed\");", "a failed HTTP status enters the error path", "assuming fetch rejects for every 404 or 500 response"],
+  ]),
+  "py-1-variables": quizFacts([
+    ["assignment", "creates or updates a variable with a value", "score = 4", "score stores the integer 4", "adding let or var before a Python assignment"],
+    ["string", "stores text between matching quote marks", "city = \"Manila\"", "city contains the text Manila", "using mismatched opening and closing quotes"],
+    ["integer", "stores a whole numeric value", "age = 17", "age + 1 evaluates to 18", "putting quotes around a number intended for arithmetic"],
+    ["print", "writes a value to standard output", "print(\"Hello\", name)", "Hello and the value of name are displayed", "using print as though it changed a variable"],
+    ["f-string", "inserts expressions into text prefixed with f", "name = \"Mia\"; print(f\"Hi {name}\")", "Hi Mia is printed", "forgetting the f before the opening quote"],
+  ]),
+  "py-2-loops-conditions": quizFacts([
+    ["if", "runs an indented block when a condition is true", "if score >= 10:\n    print(\"Win\")", "Win prints when score is at least 10", "forgetting the colon after the condition"],
+    ["indentation", "marks which statements belong to a block", "if ready:\n    start()", "start is inside the if block", "mixing inconsistent indentation in one block"],
+    ["for loop", "visits each item in an iterable sequence", "for item in [2, 4]:\n    print(item)", "2 and then 4 are printed", "changing a loop variable expecting the iterable to change"],
+    ["range", "generates a sequence of integers up to but excluding its stop", "list(range(3))", "the list is [0, 1, 2]", "expecting range(3) to include 3"],
+    ["modulo", "returns the remainder after division", "10 % 3", "the expression evaluates to 1", "using a single equals sign to compare values"],
+  ]),
+  "py-3-lists-functions": quizFacts([
+    ["list", "stores an ordered collection of values", "scores = [88, 92, 75]", "the list has three items in that order", "using curly braces when an ordered list is intended"],
+    ["append", "adds one item to the end of a list", "scores.append(95)", "95 becomes the last list item", "assigning the return from append as the updated list"],
+    ["function", "defines reusable code with def", "def square(n):\n    return n * n", "square(3) returns 9", "forgetting the colon after the function header"],
+    ["return", "sends a function result to its caller", "def double(n):\n    return n * 2", "double(4) produces 8", "using print instead of return when the caller needs a value"],
+    ["len", "returns the number of items in a collection", "len([\"a\", \"b\"])", "the result is 2", "assuming len returns the final index"],
+  ]),
+  "py-4-dictionaries": quizFacts([
+    ["dictionary", "maps unique keys to associated values", "inventory = {\"apples\": 3}", "the apples key maps to 3", "looking up a missing key without choosing a safe default"],
+    ["key lookup", "reads the value associated with an existing key", "inventory[\"apples\"]", "the expression returns 3", "using square brackets for a key that may not exist"],
+    ["get", "reads a key and can return a default if it is absent", "inventory.get(\"oranges\", 0)", "0 is returned if oranges is missing", "assuming get inserts the missing key"],
+    ["items", "iterates through dictionary keys and values together", "for name, score in scores.items():", "each loop receives one key and its value", "trying to unpack items into only one variable"],
+    ["membership", "checks whether a key exists in a dictionary", "\"apples\" in inventory", "the expression is true when apples is a key", "checking a value with in when you mean to test keys"],
+  ]),
+  "py-5-classes-errors": quizFacts([
+    ["class", "defines a blueprint for objects with data and behavior", "class Counter:\n    pass", "Counter names a new class", "calling an instance method on the class without an instance"],
+    ["__init__", "initializes a newly created instance", "def __init__(self, value):\n    self.value = value", "new objects store the supplied value", "omitting self from an instance method's parameters"],
+    ["self", "refers to the current instance inside an instance method", "self.value = 3", "the current object receives value 3", "using self as a special keyword instead of a conventional parameter name"],
+    ["try/except", "runs a handler when a matching exception is raised", "try:\n    int(text)\nexcept ValueError:\n    print(\"Invalid\")", "Invalid prints if text cannot be converted", "using a broad except that hides unrelated programming errors"],
+    ["specific exception", "names the failure a handler is designed to recover from", "except TypeError:", "only TypeError enters this handler", "catching an unrelated exception type"],
+  ]),
+  "html-1-structure": quizFacts([
+    ["h1", "marks the primary heading of a page or section", "<h1>My First Page</h1>", "a large primary heading appears", "using headings only to make text look large"],
+    ["paragraph", "marks a block of prose text", "<p>Welcome to my page.</p>", "the sentence is rendered as a paragraph", "using a paragraph element only as a generic layout container"],
+    ["unordered list", "groups items where ordering is not meaningful", "<ul><li>Tea</li></ul>", "Tea appears as a bulleted list item", "placing li elements outside a list container"],
+    ["body", "contains the page content displayed in the document", "<body><p>Hello</p></body>", "Hello appears in the page body", "placing visible page text in the head element"],
+    ["closing tag", "marks the end of most paired HTML elements", "</p>", "the paragraph element ends at this tag", "forgetting to close a nested element"],
+  ]),
+  "html-2-images-links": quizFacts([
+    ["img", "embeds an image resource in the page", "<img src=\"flower.jpg\" alt=\"Red flower\">", "the browser displays flower.jpg", "omitting useful alternative text"],
+    ["src", "identifies the resource location for an image", "src=\"photo.jpg\"", "the image loads from photo.jpg", "putting an image location in href"],
+    ["alt", "provides text alternative for an informative image", "alt=\"A red flower in a pot\"", "assistive technology can announce the description", "using a filename as meaningless alt text"],
+    ["anchor", "creates a hyperlink to a destination", "<a href=\"/about\">About us</a>", "About us links to /about", "using a button element for navigation"],
+    ["href", "sets the destination address of a link", "href=\"https://example.com\"", "activating the link opens example.com", "using src as the link destination"],
+  ]),
+  "html-3-forms": quizFacts([
+    ["form", "groups controls used to submit user-provided data", "<form><input name=\"email\"></form>", "the input is part of a form", "omitting a submission method when the server requires one"],
+    ["label", "names a form control for sighted and assistive users", "<label for=\"email\">Email</label>", "Email is the visible name for the control", "leaving for unmatched with the control id"],
+    ["type=email", "asks for an email address and enables browser validation", "<input type=\"email\">", "the browser checks that the value resembles an email", "using a text input when email validation is desired"],
+    ["required", "marks a control that must have a value before submission", "<input required>", "the browser blocks submission when it is empty", "assuming required replaces server-side validation"],
+    ["submit button", "submits its containing form by default", "<button type=\"submit\">Join</button>", "activating Join submits the form", "placing a submit button outside the form it should submit"],
+  ]),
+  "html-4-semantic-accessibility": quizFacts([
+    ["main", "identifies the page's primary content region", "<main><h1>Journal</h1></main>", "assistive technology can jump to primary content", "using multiple visible main regions for one page"],
+    ["article", "groups self-contained content that can stand on its own", "<article><h2>News</h2></article>", "News is contained in an article region", "using article for a wrapper with no independent meaning"],
+    ["nav", "groups major navigation links", "<nav aria-label=\"Main\"><a href=\"/\">Home</a></nav>", "the links are announced as a navigation region", "wrapping every unrelated link in a nav landmark"],
+    ["heading hierarchy", "uses nested heading levels to communicate structure", "<h1>Guide</h1><h2>Setup</h2>", "Setup is a subsection of Guide", "skipping levels only to change font size"],
+    ["descriptive alt", "summarizes the useful information in an informative image", "alt=\"Tomatoes on a balcony\"", "the image's relevant subject is available as text", "writing generic text such as image for every alt value"],
+  ]),
+  "css-1-selectors": quizFacts([
+    ["element selector", "selects every element with a matching tag name", "h1 { color: purple; }", "all h1 elements become purple", "prefixing a tag name with a dot"],
+    ["class selector", "selects elements carrying a matching class", ".note { padding: 10px; }", "elements with class note get padding", "using # when targeting a class"],
+    ["id selector", "selects the element with a matching id", "#main { color: navy; }", "the element with id main becomes navy", "using a class selector for a unique id"],
+    ["declaration", "pairs a property with a value inside a rule", "color: red;", "the text color is set to red", "omitting the colon between property and value"],
+    ["style element", "contains CSS rules embedded in an HTML page", "<style>p { color: teal; }</style>", "paragraph text is styled teal", "placing HTML markup inside a CSS declaration block"],
+  ]),
+  "css-2-box-model-flex": quizFacts([
+    ["margin", "adds space outside an element's border", "margin: 12px;", "neighboring content is separated outside the box", "using margin when inner content needs breathing room"],
+    ["padding", "adds space between content and its border", "padding: 16px;", "the content moves inward from the border", "using padding to separate two different elements"],
+    ["display:flex", "makes an element a flex container for its children", ".row { display: flex; }", "the row's children participate in flex layout", "setting flex on a child but not the container"],
+    ["gap", "sets spacing between items in a layout container", ".row { display: flex; gap: 12px; }", "flex items have 12px between them", "using margin hacks when container gap is appropriate"],
+    ["flex:1", "lets a flex item share available space", ".card { flex: 1; }", "cards can grow to share the row width", "expecting flex:1 to work without a flex parent"],
+  ]),
+  "css-3-responsive-design": quizFacts([
+    ["media query", "applies styles only when a media condition matches", "@media (max-width: 600px) { .cards { gap: .5rem; } }", "the smaller gap applies at widths up to 600px", "writing a media query without a condition"],
+    ["CSS Grid", "lays out children in rows and columns", ".cards { display: grid; }", "the cards container becomes a grid", "using grid-template-columns without enabling grid"],
+    ["repeat", "repeats a track definition a set number of times", "grid-template-columns: repeat(2, 1fr);", "two equal-width columns are created", "using repeat to repeat HTML elements"],
+    ["flexible fraction", "shares remaining grid space proportionally", "grid-template-columns: 1fr 2fr;", "the second track is twice the first track's share", "assuming fr units are fixed pixel sizes"],
+    ["mobile-first override", "adds a narrow-screen rule without breaking the base layout", "@media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }", "the cards stack on narrow viewports", "keeping a fixed wide layout on small screens"],
+  ]),
+  "css-4-grid-tokens": quizFacts([
+    ["custom property", "stores a reusable CSS value beginning with two hyphens", ":root { --ink: #29264b; }", "the --ink token is defined for the document", "naming a custom property without the -- prefix"],
+    ["var()", "reads a custom property's value", "color: var(--ink);", "the element uses the value stored in --ink", "calling var without naming the property"],
+    [":root", "selects the document root element for shared declarations", ":root { --space: 1rem; }", "the token can be inherited through the document", "defining global tokens inside an unrelated component only"],
+    ["grid-template-columns", "defines the sizes and count of grid columns", "grid-template-columns: 12rem 1fr;", "a fixed sidebar sits beside a flexible content column", "defining rows when the desired tracks are columns"],
+    ["tokenized gap", "uses a shared spacing value between grid items", "gap: var(--space);", "the layout uses the reusable --space value", "repeating a raw spacing value instead of using the token"],
+  ]),
+  "cpp-1-hello": quizFacts([
+    ["main", "is the entry point where a standard program begins", "int main() { return 0; }", "execution begins in main", "omitting the return type from main"],
+    ["iostream", "provides standard input and output stream facilities", "#include <iostream>", "std::cout is available after inclusion", "including string when stream declarations are needed"],
+    ["int", "stores a whole-number integer value", "int age = 17;", "age + 1 evaluates to 18", "using int for a value that needs fractional precision"],
+    ["std::cout", "writes formatted output to the standard output stream", "std::cout << \"Hi\";", "Hi is written to standard output", "using a single < instead of the stream insertion operator <<"],
+    ["return 0", "signals successful completion from main", "return 0;", "the program reports successful exit", "placing return before required statements in main"],
+  ]),
+  "cpp-2-loops-functions": quizFacts([
+    ["for loop", "repeats while its condition remains true", "for (int i = 0; i < 3; ++i) {}", "the loop body runs three times", "using a condition that stays true forever"],
+    ["function parameter", "receives an argument passed to a function", "int square(int n) { return n * n; }", "n receives the value supplied to square", "declaring a parameter but never using its value"],
+    ["return type", "states what kind of value a function returns", "int add(int a, int b)", "add must return an integer result", "returning a value incompatible with the declared type"],
+    ["return", "sends a value back to the function caller", "return a + b;", "the sum is returned to the caller", "expecting statements after return to execute"],
+    ["function call", "invokes a function with arguments", "square(3)", "the square function runs with n equal to 3", "declaring a function without calling it"],
+  ]),
+  "cpp-3-vectors": quizFacts([
+    ["std::vector", "stores a sequence whose size can change", "std::vector<int> scores{80, 90};", "scores initially contains two integers", "accessing an element after the vector is empty"],
+    ["push_back", "adds an element to the end of a vector", "scores.push_back(95);", "95 becomes the last element", "assuming push_back returns the modified vector"],
+    ["size", "returns the number of elements currently stored", "scores.size()", "a vector with three elements reports size 3", "treating size as the index of the last item"],
+    ["range-based loop", "visits each element in a range", "for (int score : scores) {}", "score takes each element value in turn", "modifying the vector's size while iterating without care"],
+    ["accumulate", "combines values in a range using a starting value", "std::accumulate(v.begin(), v.end(), 0)", "the elements are summed starting from zero", "forgetting to include the numeric header"],
+  ]),
+  "cpp-4-classes-raii": quizFacts([
+    ["class", "defines a type that groups data and member functions", "class Box { public: int size() const; };", "Box is a user-defined type", "forgetting the semicolon after a class definition"],
+    ["private", "limits direct access to class members from outside", "private: int value_;", "value_ cannot be accessed directly by ordinary callers", "making internal state public without a reason"],
+    ["public", "exposes class members as part of its interface", "public: int getValue() const;", "callers can invoke getValue", "placing the intended API under private"],
+    ["constructor", "initializes an object when it is created", "Box(int value) : value_(value) {}", "the new Box stores the provided value", "confusing a constructor with an ordinary method return type"],
+    ["RAII", "ties resource ownership and cleanup to object lifetime", "std::vector<int> values;", "the vector releases its owned storage automatically", "manually freeing a resource already managed by an RAII type"],
+  ]),
+};
+
+// CodeLearn engine: renders lessons, runs code, checks quizzes, saves progress.
+
+const TRACKS = window.LESSON_TRACKS || {};
+const STORAGE_KEY = "codelearn-progress-v1";
+const DRAFTS_STORAGE_KEY = "codelearn-drafts-v1";
+const PROJECT_DB_NAME = "codelearn-projects-v1";
+const PROJECT_STORE_NAME = "projects";
+const MAX_PROJECT_FILES = 1000;
+const MAX_PROJECT_BYTES = 25 * 1024 * 1024;
+
+let state = {
+  track: Object.keys(TRACKS)[0],
+  lessonIndex: 0,
+  view: "lesson",
+};
+
+let progress = loadProgress();
+let draftsStorageAvailable = true;
+let drafts = loadDrafts();
+const quizSessions = {};
+let projectDbPromise = null;
+let activeProject = null;
+let selectedProjectPath = null;
+let projectSaveTimer = null;
+
+function loadProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  } catch (e) {
+    /* storage may be unavailable; progress still works for this visit */
+  }
+}
+
+function loadDrafts() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(DRAFTS_STORAGE_KEY));
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) return {};
+    return Object.keys(saved).reduce((result, key) => {
+      if (typeof saved[key] === "string") result[key] = saved[key];
+      return result;
+    }, {});
+  } catch (e) {
+    draftsStorageAvailable = false;
+    return {};
+  }
+}
+
+function saveDrafts() {
+  try {
+    localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(drafts));
+    draftsStorageAvailable = true;
+    return true;
+  } catch (e) {
+    draftsStorageAvailable = false;
+    return false;
+  }
+}
+
+function lessonsFor(track) {
+  return TRACKS[track].lessons;
+}
+
+function lessonKey(track, lesson) {
+  return track + ":" + lesson.id;
+}
+
+function isDone(track, lesson) {
+  return !!progress[lessonKey(track, lesson)];
+}
+
+function markDone(track, lesson) {
+  const key = lessonKey(track, lesson);
+  const newlyCompleted = !progress[key];
+  progress[key] = true;
+  if (newlyCompleted) {
+    saveProgress();
+  }
+  renderSidebar();
+  renderOverallProgress();
+}
+
+// ---------- Rendering shell ----------
+
+function renderTabs() {
+  const nav = document.getElementById("language-tabs");
+  nav.innerHTML = "";
+  Object.keys(TRACKS).forEach((key) => {
+    const btn = document.createElement("button");
+    btn.textContent = TRACKS[key].name;
+    if (key === state.track) btn.classList.add("active");
+    btn.onclick = () => {
+      state.track = key;
+      state.lessonIndex = 0;
+      state.view = "lesson";
+      render();
+    };
+    nav.appendChild(btn);
+  });
+}
+
+function renderSidebar() {
+  const list = document.getElementById("lesson-list");
+  document.getElementById("track-title").textContent = TRACKS[state.track].name + " lessons";
+  list.innerHTML = "";
+  lessonsFor(state.track).forEach((lesson, i) => {
+    const li = document.createElement("li");
+    li.textContent = lesson.title;
+    if (i === state.lessonIndex) li.classList.add("active");
+    if (isDone(state.track, lesson)) li.classList.add("done");
+    li.onclick = () => {
+      state.lessonIndex = i;
+      state.view = "lesson";
+      renderLesson();
+      renderSidebar();
+    };
+    list.appendChild(li);
+  });
+}
+
+function renderOverallProgress() {
+  let total = 0;
+  let done = 0;
+  Object.keys(TRACKS).forEach((t) => {
+    lessonsFor(t).forEach((l) => {
+      total++;
+      if (progress[lessonKey(t, l)]) done++;
+    });
+  });
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById("progress-text").textContent = pct + "% complete";
+  document.getElementById("progress-fill").style.width = pct + "%";
+}
+
+function render() {
+  renderTabs();
+  renderSidebar();
+  const layout = document.querySelector(".layout");
+  layout.classList.toggle("quiz-mode", state.view === "quiz");
+  layout.classList.toggle("workspace-mode", state.view === "workspace");
+  if (state.view === "quiz") {
+    renderQuizPage();
+  } else if (state.view === "workspace") {
+    renderWorkspacePage();
+  } else {
+    renderLesson();
+  }
+  renderOverallProgress();
+}
+
+function transitionToView(view, direction) {
+  state.view = view;
+  render();
+  const content = document.getElementById("content");
+  content.classList.remove("view-enter-forward", "view-enter-back");
+  void content.offsetWidth;
+  content.classList.add(direction === "forward" ? "view-enter-forward" : "view-enter-back");
+  window.scrollTo(0, 0);
+  const headingId = view === "quiz" ? "quiz-title" : view === "workspace" ? "workspace-title" : "lesson-title";
+  document.getElementById(headingId).focus({ preventScroll: true });
+}
+
+// ---------- Lesson view ----------
+
+function renderLesson() {
+  const lessons = lessonsFor(state.track);
+  const lesson = lessons[state.lessonIndex];
+  const content = document.getElementById("content");
+  const runnerType = TRACKS[state.track].runner;
+
+  content.innerHTML = `
+    <div class="lesson-heading">
+      <div>
+        <span class="lesson-level">${lesson.level || (state.lessonIndex < 2 ? "Beginner" : state.lessonIndex < lessons.length - 1 ? "Intermediate" : "Advanced")}</span>
+        <h1 id="lesson-title" tabindex="-1">${lesson.title}</h1>
+      </div>
+    </div>
+    <p class="lead">${lesson.summary || ""}</p>
+
+    <div class="card">
+      ${lesson.explain}
+    </div>
+
+    <h2>Example: read it, then run it</h2>
+    <div class="card">
+      <pre><code>${escapeHtml(lesson.example)}</code></pre>
+      ${runnerType === "html"
+    ? `<h3 class="result-heading">Rendered example result</h3><p class="example-result-note">${escapeHtml(lesson.exampleResult || "The HTML is rendered in the preview below.")}</p>`
+    : `<h3 class="result-heading">Example result</h3><pre class="example-result">${escapeHtml(lesson.exampleResult || "Run this example to see its output.")}</pre>`}
+      ${runnerBlock(runnerType, lesson.example, "example")}
+    </div>
+
+    <h2>Your turn</h2>
+    <div class="card">
+      <p>${lesson.exercise.prompt}</p>
+      <textarea class="editor" id="exercise-editor" spellcheck="false">${escapeHtml(lesson.exercise.starter || "")}</textarea>
+      <p class="draft-status" id="draft-status" role="status" aria-live="polite"></p>
+      ${runnerBlock(runnerType, null, "exercise")}
+      <details class="hint">
+        <summary>Show a hint</summary>
+        <p>${lesson.exercise.hint}</p>
+      </details>
+      <details class="hint">
+        <summary>Show a sample solution (try first!)</summary>
+        <pre><code>${escapeHtml(lesson.exercise.solution)}</code></pre>
+      </details>
+    </div>
+
+    <h2>Check what you learned</h2>
+    <div class="card quiz-invite">
+      <div>
+        <span class="quiz-invite-kicker">20 QUESTIONS</span>
+        <h3>Ready to test your knowledge?</h3>
+        <p>Take a quick quiz on this lesson. You can return to the lesson without losing your answers.</p>
+      </div>
+      <button class="btn" id="start-quiz-btn">Start quiz <span aria-hidden="true">→</span></button>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn secondary" id="prev-btn" ${state.lessonIndex === 0 ? "disabled" : ""}>← Previous</button>
+      <button class="btn secondary" id="next-btn" ${state.lessonIndex === lessons.length - 1 ? "disabled" : ""}>Next →</button>
+    </div>
+  `;
+
+  addRainbowWords(content);
+  const editor = document.getElementById("exercise-editor");
+  const draftStatus = document.getElementById("draft-status");
+  const key = lessonKey(state.track, lesson);
+  const hasDraft = Object.prototype.hasOwnProperty.call(drafts, key);
+  if (hasDraft) {
+    editor.value = drafts[key];
+  }
+  draftStatus.textContent = !draftsStorageAvailable
+    ? "Saved drafts are unavailable in this browser."
+    : hasDraft
+      ? "Draft restored from this device."
+      : "Your code is saved automatically on this device.";
+  editor.addEventListener("input", () => {
+    drafts[key] = editor.value;
+    draftStatus.textContent = saveDrafts()
+      ? "Draft saved on this device."
+      : "Could not save your draft. Check your browser storage settings.";
+  });
+
+  if (runnerType === "html") {
+    document.getElementById("example-frame").srcdoc = lesson.example;
+  }
+  document.getElementById("start-quiz-btn").onclick = () => transitionToView("quiz", "forward");
+  document.getElementById("prev-btn").onclick = () => goTo(state.lessonIndex - 1);
+  document.getElementById("next-btn").onclick = () => goTo(state.lessonIndex + 1);
+  window.scrollTo(0, 0);
+}
+
+function renderQuizPage() {
+  const lesson = lessonsFor(state.track)[state.lessonIndex];
+  const content = document.getElementById("content");
+  content.innerHTML = `
+    <div class="quiz-page">
+      <button class="btn secondary quiz-back" id="quiz-back-top">← Back to lesson</button>
+      <div class="quiz-page-heading">
+        <span class="lesson-level">${TRACKS[state.track].name} review</span>
+        <h1 id="quiz-title" tabindex="-1">Check what you learned</h1>
+        <p class="lead">${lesson.title} · 20 questions</p>
+      </div>
+      <div class="quiz-progress" role="group" aria-label="Quiz progress">
+        <span id="quiz-progress-text">0 of 20 questions answered</span>
+        <div class="quiz-progress-bar" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0">
+          <div class="quiz-progress-fill"></div>
+        </div>
+      </div>
+      <div class="card" id="quiz"></div>
+      <div class="nav-row">
+        <button class="btn secondary" id="quiz-back-bottom">← Return to lesson</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("quiz-back-top").onclick = () => transitionToView("lesson", "back");
+  document.getElementById("quiz-back-bottom").onclick = () => transitionToView("lesson", "back");
+  renderQuiz(lesson);
+  window.scrollTo(0, 0);
+}
+
+function goTo(i) {
+  state.lessonIndex = i;
+  state.view = "lesson";
+  renderLesson();
+  renderSidebar();
+}
+
+// ---------- Project workspace ----------
+
+function openProjectDatabase() {
+  if (!("indexedDB" in window)) {
+    return Promise.reject(new Error("This browser does not support local project storage."));
+  }
+  if (!projectDbPromise) {
+    projectDbPromise = new Promise((resolve, reject) => {
+      const request = indexedDB.open(PROJECT_DB_NAME, 1);
+      request.onupgradeneeded = () => {
+        if (!request.result.objectStoreNames.contains(PROJECT_STORE_NAME)) {
+          request.result.createObjectStore(PROJECT_STORE_NAME, { keyPath: "id" });
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error("Could not open project storage."));
+      request.onblocked = () => reject(new Error("Project storage is busy in another tab. Close that tab and try again."));
+    });
+    projectDbPromise.catch(() => {
+      projectDbPromise = null;
+    });
+  }
+  return projectDbPromise;
+}
+
+function getStoredProjects() {
+  return openProjectDatabase().then((db) => new Promise((resolve, reject) => {
+    const request = db.transaction(PROJECT_STORE_NAME, "readonly")
+      .objectStore(PROJECT_STORE_NAME)
+      .getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error("Could not load projects."));
+  }));
+}
+
+function getStoredProject(id) {
+  return openProjectDatabase().then((db) => new Promise((resolve, reject) => {
+    const request = db.transaction(PROJECT_STORE_NAME, "readonly")
+      .objectStore(PROJECT_STORE_NAME)
+      .get(id);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error("Could not open this project."));
+  }));
+}
+
+function saveStoredProject(project) {
+  project.updatedAt = new Date().toISOString();
+  return openProjectDatabase().then((db) => new Promise((resolve, reject) => {
+    const transaction = db.transaction(PROJECT_STORE_NAME, "readwrite");
+    transaction.objectStore(PROJECT_STORE_NAME).put(project);
+    transaction.oncomplete = () => resolve(project);
+    transaction.onerror = () => reject(transaction.error || new Error("Could not save this project."));
+    transaction.onabort = () => reject(transaction.error || new Error("Project saving was interrupted."));
+  }));
+}
+
+function deleteStoredProject(id) {
+  return openProjectDatabase().then((db) => new Promise((resolve, reject) => {
+    const transaction = db.transaction(PROJECT_STORE_NAME, "readwrite");
+    transaction.objectStore(PROJECT_STORE_NAME).delete(id);
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error || new Error("Could not delete this project."));
+    transaction.onabort = () => reject(transaction.error || new Error("Project deletion was interrupted."));
+  }));
+}
+
+function showWorkspaceStatus(message, isError) {
+  const status = document.getElementById("workspace-status");
+  if (!status) return;
+  status.textContent = message;
+  status.className = "workspace-status" + (isError ? " error" : "");
+}
+
+function showWorkspaceError(error) {
+  const message = error && error.message ? error.message : "Something went wrong.";
+  if (document.getElementById("workspace-status")) {
+    showWorkspaceStatus(message, true);
+  } else {
+    window.alert(`Project workspace error: ${message}`);
+  }
+}
+
+function requestWorkspaceInput(labelText, initialValue) {
+  return new Promise((resolve) => {
+    const dialog = document.createElement("dialog");
+    dialog.className = "workspace-input-dialog";
+    const form = document.createElement("form");
+    const heading = document.createElement("h2");
+    heading.id = "workspace-dialog-title";
+    heading.textContent = labelText;
+    dialog.setAttribute("aria-labelledby", heading.id);
+    const label = document.createElement("label");
+    label.htmlFor = "workspace-input-value";
+    label.textContent = labelText;
+    const input = document.createElement("input");
+    input.id = "workspace-input-value";
+    input.type = "text";
+    input.value = initialValue;
+    input.maxLength = 180;
+    input.required = true;
+    const actions = document.createElement("div");
+    actions.className = "workspace-dialog-actions";
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "btn secondary";
+    cancel.textContent = "Cancel";
+    cancel.onclick = () => dialog.close();
+    const submit = document.createElement("button");
+    submit.type = "submit";
+    submit.className = "btn";
+    submit.textContent = "Continue";
+    actions.append(cancel, submit);
+    form.append(heading, label, input, actions);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      dialog.close("submit");
+    });
+    dialog.addEventListener("close", () => {
+      resolve(dialog.returnValue === "submit" ? input.value : null);
+      dialog.remove();
+    }, { once: true });
+    dialog.appendChild(form);
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    input.focus();
+    input.select();
+  });
+}
+
+function renderWorkspacePage() {
+  if (activeProject) {
+    renderProjectEditor(activeProject);
+  } else {
+    renderProjectLibrary();
+  }
+}
+
+function renderProjectLibrary() {
+  const content = document.getElementById("content");
+  content.innerHTML = `
+    <section class="project-library">
+      <div class="workspace-heading">
+        <div>
+          <span class="lesson-level">YOUR WORKSPACE</span>
+          <h1 id="workspace-title" tabindex="-1">Projects</h1>
+          <p class="lead">Create a project or import a folder. Projects save in this browser.</p>
+        </div>
+      </div>
+      <div class="workspace-toolbar">
+        <button class="btn" id="new-project-btn">＋ New project</button>
+        <button class="btn secondary" id="import-folder-btn">Open a folder</button>
+        <input id="folder-import-input" type="file" webkitdirectory directory multiple hidden>
+      </div>
+      <p class="workspace-status" id="workspace-status" role="status" aria-live="polite"></p>
+      <div class="project-list" id="project-list"><p>Loading saved projects…</p></div>
+      <p class="workspace-note">Download a project as a ZIP when you’re ready to upload it to a hosting provider.</p>
+    </section>
+  `;
+
+  document.getElementById("new-project-btn").onclick = createProject;
+  document.getElementById("import-folder-btn").onclick = () => {
+    document.getElementById("folder-import-input").click();
+  };
+  document.getElementById("folder-import-input").addEventListener("change", importProjectFolder);
+  getStoredProjects()
+    .then((projects) => {
+      if (state.view === "workspace" && !activeProject && document.getElementById("project-list")) {
+        renderProjectCards(projects);
+      }
+    })
+    .catch(showWorkspaceError);
+}
+
+function renderProjectCards(projects) {
+  const list = document.getElementById("project-list");
+  list.innerHTML = "";
+  if (!projects.length) {
+    const empty = document.createElement("div");
+    empty.className = "project-empty";
+    empty.textContent = "No projects yet. Create one or open a folder from your computer.";
+    list.appendChild(empty);
+    return;
+  }
+
+  projects.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).forEach((project) => {
+    const card = document.createElement("article");
+    card.className = "project-card";
+    const details = document.createElement("div");
+    const name = document.createElement("h2");
+    name.textContent = project.name;
+    const info = document.createElement("p");
+    info.textContent = `${project.files.length} files · Saved ${new Date(project.updatedAt).toLocaleDateString()}`;
+    details.append(name, info);
+
+    const actions = document.createElement("div");
+    actions.className = "project-card-actions";
+    const open = document.createElement("button");
+    open.className = "btn";
+    open.textContent = "Open";
+    open.onclick = () => openProject(project.id);
+    const remove = document.createElement("button");
+    remove.className = "btn secondary";
+    remove.textContent = "Delete";
+    remove.onclick = () => removeProject(project.id, project.name);
+    actions.append(open, remove);
+    card.append(details, actions);
+    list.appendChild(card);
+  });
+}
+
+function createProjectId() {
+  return window.crypto && typeof window.crypto.randomUUID === "function"
+    ? window.crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+async function createProject() {
+  const enteredName = await requestWorkspaceInput("Project name", "My website");
+  if (enteredName === null) return;
+  const name = enteredName.trim().slice(0, 60);
+  if (!name) {
+    showWorkspaceStatus("Enter a project name to continue.", true);
+    return;
+  }
+  const project = {
+    id: createProjectId(),
+    name,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    folders: [],
+    files: [{
+      path: "index.html",
+      isText: true,
+      content: "<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>My website</title>\n</head>\n<body>\n  <h1>Hello, world!</h1>\n  <p>Start building your project here.</p>\n</body>\n</html>\n",
+    }],
+  };
+  saveStoredProject(project)
+    .then(() => {
+      activeProject = project;
+      selectedProjectPath = "index.html";
+      renderProjectEditor(project);
+      showWorkspaceStatus("Project created and saved in this browser.");
+    })
+    .catch(showWorkspaceError);
+}
+
+function openProject(id) {
+  getStoredProject(id)
+    .then((project) => {
+      if (!project) throw new Error("This project could not be found.");
+      activeProject = project;
+      selectedProjectPath = project.files.length ? project.files[0].path : null;
+      renderProjectEditor(project);
+    })
+    .catch(showWorkspaceError);
+}
+
+function removeProject(id, name) {
+  if (!window.confirm(`Delete “${name}” from this browser? This cannot be undone.`)) return;
+  deleteStoredProject(id)
+    .then(() => {
+      if (activeProject && activeProject.id === id) {
+        activeProject = null;
+        selectedProjectPath = null;
+      }
+      renderProjectPageAfterChange();
+      showWorkspaceStatus("Project deleted.");
+    })
+    .catch(showWorkspaceError);
+}
+
+function renderProjectPageAfterChange() {
+  if (state.view === "workspace") renderWorkspacePage();
+}
+
+function safeProjectName(name) {
+  return name.replace(/[<>:"/\\|?*\u0000-\u001f]+/g, "-").replace(/^[. ]+|[. ]+$/g, "") || "project";
+}
+
+function normalizeProjectPath(path) {
+  const parts = String(path).replace(/\\/g, "/").split("/").filter(Boolean);
+  if (!parts.length || parts.some((part) => (
+    part === "." || part === ".." || /[\u0000-\u001f<>:"|?*]/.test(part) || /[. ]$/.test(part)
+  ))) {
+    return null;
+  }
+  return parts.join("/");
+}
+
+function getProjectFileSize(file, contentOverride) {
+  return file.isText
+    ? new TextEncoder().encode(contentOverride === undefined ? file.content : contentOverride).length
+    : file.data ? file.data.byteLength : 0;
+}
+
+function getProjectSize(project) {
+  return project.files.reduce((total, file) => total + getProjectFileSize(file), 0);
+}
+
+function addProjectFolderParents(project, path) {
+  if (!path) return;
+  const parts = path.split("/");
+  for (let i = 1; i <= parts.length; i++) {
+    const folder = parts.slice(0, i).join("/");
+    if (!project.folders.includes(folder)) project.folders.push(folder);
+  }
+}
+
+function importProjectFolder(event) {
+  const input = event.currentTarget;
+  const files = Array.from(input.files || []);
+  input.value = "";
+  if (!files.length) return;
+
+  const totalBytes = files.reduce((total, file) => total + file.size, 0);
+  if (files.length > MAX_PROJECT_FILES || totalBytes > MAX_PROJECT_BYTES) {
+    showWorkspaceStatus("This folder is too large to import. Choose up to 1,000 files and 25 MB total.", true);
+    return;
+  }
+  const firstPath = files[0].webkitRelativePath || files[0].name;
+  const rootName = firstPath.split("/")[0] || "Imported project";
+  const project = {
+    id: createProjectId(),
+    name: rootName.slice(0, 60),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    folders: [],
+    files: [],
+  };
+
+  Promise.all(files.map(async (file) => {
+    const fullPath = file.webkitRelativePath || file.name;
+    const path = normalizeProjectPath(fullPath.split("/").slice(1).join("/") || file.name);
+    if (!path) throw new Error(`Could not import “${file.name}” because its path contains unsupported characters.`);
+    const isText = isTextProjectFile(path, file.type);
+    const entry = isText
+      ? { path, isText: true, content: await file.text() }
+      : { path, isText: false, data: new Uint8Array(await file.arrayBuffer()) };
+    addProjectFolderParents(project, path.split("/").slice(0, -1).join("/"));
+    return entry;
+  }))
+    .then((entries) => {
+      project.files = entries.filter(Boolean);
+      if (!project.files.length) throw new Error("The selected folder did not contain any files.");
+      if (getProjectSize(project) > MAX_PROJECT_BYTES) {
+        throw new Error("The imported folder expands beyond the 25 MB project limit.");
+      }
+      return saveStoredProject(project);
+    })
+    .then(() => {
+      activeProject = project;
+      selectedProjectPath = project.files.find((file) => file.isText)?.path || project.files[0].path;
+      renderProjectEditor(project);
+      showWorkspaceStatus(`Imported ${project.files.length} files and saved the project in this browser.`);
+    })
+    .catch(showWorkspaceError);
+}
+
+function isTextProjectFile(path, mimeType) {
+  const name = path.split("/").pop().toLowerCase();
+  return mimeType.startsWith("text/")
+    || /^(dockerfile|makefile|license|readme|\.env|\.gitignore|\.editorconfig)$/.test(name)
+    || /\.(html?|css|scss|js|mjs|cjs|ts|tsx|jsx|json|md|txt|xml|svg|ya?ml|toml|py|c|h|cc|cpp|hpp|java|go|rs|php|sql|sh|bat|ps1|ini|conf|log|env|gitignore)$/.test(name)
+    || mimeType === "application/json";
+}
+
+function renderProjectEditor(project) {
+  const content = document.getElementById("content");
+  const selectedFile = project.files.find((file) => file.path === selectedProjectPath);
+  content.innerHTML = `
+    <section class="project-workspace">
+      <div class="workspace-editor-heading">
+        <button class="btn secondary" id="back-to-projects-btn">← All projects</button>
+        <div class="workspace-project-name">
+          <span class="lesson-level">PROJECT</span>
+          <h1 id="workspace-title" tabindex="-1"></h1>
+        </div>
+        <div class="workspace-toolbar compact">
+          <button class="btn secondary" id="new-project-folder-btn">＋ Folder</button>
+          <button class="btn secondary" id="new-project-file-btn">＋ File</button>
+          <button class="btn" id="download-project-zip-btn">Download ZIP</button>
+        </div>
+      </div>
+      <p class="workspace-status" id="workspace-status" role="status" aria-live="polite">Project saved in this browser.</p>
+      <div class="workspace-shell">
+        <aside class="project-explorer">
+          <div class="explorer-heading">EXPLORER</div>
+          <div id="project-tree" class="project-tree"></div>
+        </aside>
+        <section class="project-code-panel">
+          <div class="project-file-tab" id="project-file-tab"></div>
+          <textarea id="project-code-editor" class="project-code-editor" aria-label="Project file editor" spellcheck="false" hidden></textarea>
+          <p id="project-binary-note" class="project-binary-note" hidden></p>
+          <div id="project-empty-editor" class="project-empty-editor" hidden>Select a file to start editing.</div>
+        </section>
+      </div>
+      <div class="workspace-publish">
+        <p>Download a ZIP, then publish it using your hosting provider’s supported workflow.</p>
+        <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Netlify Drop</a>
+        <a href="https://vercel.com/docs/deployments" target="_blank" rel="noopener noreferrer">Vercel deploy guide</a>
+      </div>
+    </section>
+  `;
+  document.getElementById("workspace-title").textContent = project.name;
+  document.getElementById("back-to-projects-btn").onclick = returnToProjectLibrary;
+  document.getElementById("new-project-folder-btn").onclick = addProjectFolder;
+  document.getElementById("new-project-file-btn").onclick = addProjectFile;
+  document.getElementById("download-project-zip-btn").onclick = downloadProjectZip;
+  renderProjectTree(project);
+
+  const fileTab = document.getElementById("project-file-tab");
+  const editor = document.getElementById("project-code-editor");
+  const binaryNote = document.getElementById("project-binary-note");
+  const emptyEditor = document.getElementById("project-empty-editor");
+  if (!selectedFile) {
+    emptyEditor.hidden = false;
+  } else {
+    fileTab.textContent = selectedFile.path;
+    if (selectedFile.isText) {
+      editor.hidden = false;
+      editor.value = selectedFile.content;
+      editor.addEventListener("input", () => {
+        const nextContent = editor.value;
+        const otherBytes = project.files.reduce((total, file) => (
+          total + (file === selectedFile ? 0 : getProjectFileSize(file))
+        ), 0);
+        if (otherBytes + getProjectFileSize(selectedFile, nextContent) > MAX_PROJECT_BYTES) {
+          editor.value = selectedFile.content;
+          showWorkspaceStatus("This project has reached the 25 MB limit.", true);
+          return;
+        }
+        selectedFile.content = nextContent;
+        showWorkspaceStatus("Saving changes…");
+        scheduleProjectSave(project);
+      });
+      editor.addEventListener("blur", () => {
+        if (projectSaveTimer === null) return;
+        flushProjectSave()
+          .then(() => {
+            if (activeProject && activeProject.id === project.id) showWorkspaceStatus("Changes saved in this browser.");
+          })
+          .catch(showWorkspaceError);
+      });
+    } else {
+      binaryNote.hidden = false;
+      binaryNote.textContent = "This is a binary asset. It is preserved in your ZIP export but cannot be edited in the text editor.";
+    }
+  }
+}
+
+function renderProjectTree(project) {
+  const tree = document.getElementById("project-tree");
+  tree.innerHTML = "";
+  const folders = new Set(project.folders);
+  project.files.forEach((file) => {
+    const parts = file.path.split("/");
+    for (let i = 1; i < parts.length; i++) folders.add(parts.slice(0, i).join("/"));
+  });
+  Array.from(folders).sort((a, b) => a.split("/").length - b.split("/").length || a.localeCompare(b))
+    .forEach((path) => {
+      const folder = document.createElement("div");
+      folder.className = "project-tree-folder";
+      folder.style.paddingLeft = `${0.65 + (path.split("/").length - 1) * 0.9}rem`;
+      folder.textContent = `▸ ${path.split("/").pop()}`;
+      folder.title = path;
+      tree.appendChild(folder);
+    });
+  project.files.slice().sort((a, b) => a.path.localeCompare(b.path)).forEach((file) => {
+    const button = document.createElement("button");
+    button.className = "project-tree-file" + (file.path === selectedProjectPath ? " active" : "");
+    button.style.paddingLeft = `${0.65 + file.path.split("/").slice(0, -1).length * 0.9}rem`;
+    button.textContent = `▤ ${file.path.split("/").pop()}`;
+    button.title = file.path;
+    button.setAttribute("aria-pressed", file.path === selectedProjectPath ? "true" : "false");
+    button.onclick = () => {
+      selectedProjectPath = file.path;
+      renderProjectEditor(activeProject);
+    };
+    tree.appendChild(button);
+  });
+}
+
+function scheduleProjectSave(project) {
+  window.clearTimeout(projectSaveTimer);
+  projectSaveTimer = window.setTimeout(() => {
+    projectSaveTimer = null;
+    saveStoredProject(project)
+      .then(() => {
+        if (state.view === "workspace" && activeProject && activeProject.id === project.id) {
+          showWorkspaceStatus(`Saved in this browser at ${new Date().toLocaleTimeString()}.`);
+        }
+      })
+      .catch(showWorkspaceError);
+  }, 350);
+}
+
+function flushProjectSave() {
+  window.clearTimeout(projectSaveTimer);
+  projectSaveTimer = null;
+  return activeProject ? saveStoredProject(activeProject) : Promise.resolve();
+}
+
+function returnToProjectLibrary() {
+  flushProjectSave()
+    .then(() => {
+      activeProject = null;
+      selectedProjectPath = null;
+      renderProjectLibrary();
+    })
+    .catch(showWorkspaceError);
+}
+
+async function addProjectFolder() {
+  const enteredPath = await requestWorkspaceInput("Folder path", "assets");
+  if (enteredPath === null) return;
+  const path = normalizeProjectPath(enteredPath);
+  if (!path) {
+    showWorkspaceStatus("Enter a valid folder path without parent references or reserved characters.", true);
+    return;
+  }
+  addProjectFolderParents(activeProject, path);
+  flushProjectSave()
+    .then(() => {
+      renderProjectEditor(activeProject);
+      showWorkspaceStatus("Folder added and project saved.");
+    })
+    .catch(showWorkspaceError);
+}
+
+async function addProjectFile() {
+  const currentFolder = selectedProjectPath && selectedProjectPath.includes("/")
+    ? selectedProjectPath.slice(0, selectedProjectPath.lastIndexOf("/") + 1)
+    : "";
+  const enteredPath = await requestWorkspaceInput("File path", `${currentFolder}new-file.js`);
+  if (enteredPath === null) return;
+  const path = normalizeProjectPath(enteredPath);
+  if (!path) {
+    showWorkspaceStatus("Enter a valid file path without parent references or reserved characters.", true);
+    return;
+  }
+  const isReplacement = activeProject.files.some((file) => file.path === path);
+  if (!isReplacement && activeProject.files.length >= MAX_PROJECT_FILES) {
+    showWorkspaceStatus("This project has reached the 1,000-file limit.", true);
+    return;
+  }
+  const file = { path, isText: true, content: "" };
+  const existing = activeProject.files.find((entry) => entry.path === path);
+  const projectedSize = getProjectSize(activeProject)
+    - (existing ? getProjectFileSize(existing) : 0)
+    + getProjectFileSize(file);
+  if (projectedSize > MAX_PROJECT_BYTES) {
+    showWorkspaceStatus("This project has reached the 25 MB limit.", true);
+    return;
+  }
+  if (isReplacement && !window.confirm(`Replace ${path}?`)) return;
+  activeProject.files = activeProject.files.filter((file) => file.path !== path);
+  activeProject.files.push(file);
+  addProjectFolderParents(activeProject, path.split("/").slice(0, -1).join("/"));
+  flushProjectSave()
+    .then(() => {
+      selectedProjectPath = path;
+      renderProjectEditor(activeProject);
+      showWorkspaceStatus("File added and project saved.");
+    })
+    .catch(showWorkspaceError);
+}
+
+function downloadProjectZip() {
+  const button = document.getElementById("download-project-zip-btn");
+  button.disabled = true;
+  flushProjectSave()
+    .then(() => createProjectZip(activeProject))
+    .then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${safeProjectName(activeProject.name)}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showWorkspaceStatus("ZIP downloaded. Upload it using your hosting provider’s supported workflow.");
+    })
+    .catch(showWorkspaceError)
+    .finally(() => {
+      if (document.getElementById("download-project-zip-btn")) {
+        document.getElementById("download-project-zip-btn").disabled = false;
+      }
+    });
+}
+
+function zipCrc32(bytes) {
+  let crc = 0xffffffff;
+  for (let i = 0; i < bytes.length; i++) {
+    crc = ZIP_CRC_TABLE[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+const ZIP_CRC_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for (let n = 0; n < table.length; n++) {
+    let value = n;
+    for (let bit = 0; bit < 8; bit++) {
+      value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+    }
+    table[n] = value >>> 0;
+  }
+  return table;
+})();
+
+async function compressZipFile(bytes) {
+  if (typeof CompressionStream === "undefined") return { method: 0, bytes };
+  let compressor;
+  try {
+    compressor = new CompressionStream("deflate-raw");
+  } catch (e) {
+    return { method: 0, bytes };
+  }
+  try {
+    const stream = new Blob([bytes]).stream().pipeThrough(compressor);
+    const compressed = new Uint8Array(await new Response(stream).arrayBuffer());
+    return compressed.length < bytes.length
+      ? { method: 8, bytes: compressed }
+      : { method: 0, bytes };
+  } catch (e) {
+    return { method: 0, bytes };
+  }
+}
+
+async function createProjectZip(project) {
+  const encoder = new TextEncoder();
+  const entries = project.folders.map((path) => ({ path: `${path}/`, isFolder: true, bytes: new Uint8Array() }));
+  project.files.forEach((file) => {
+    const bytes = file.isText ? encoder.encode(file.content) : new Uint8Array(file.data);
+    entries.push({ path: file.path, isFolder: false, bytes });
+  });
+  if (!entries.length) throw new Error("Add at least one file before downloading a ZIP.");
+
+  const localParts = [];
+  const centralParts = [];
+  let localOffset = 0;
+  let centralSize = 0;
+  const now = new Date();
+  const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | Math.floor(now.getSeconds() / 2);
+  const dosDate = ((Math.max(now.getFullYear(), 1980) - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+
+  for (const entry of entries) {
+    const name = encoder.encode(entry.path);
+    const compressed = entry.isFolder ? { method: 0, bytes: entry.bytes } : await compressZipFile(entry.bytes);
+    const crc = zipCrc32(entry.bytes);
+    const localHeader = new Uint8Array(30 + name.length);
+    const local = new DataView(localHeader.buffer);
+    local.setUint32(0, 0x04034b50, true);
+    local.setUint16(4, 20, true);
+    local.setUint16(6, 0x0800, true);
+    local.setUint16(8, compressed.method, true);
+    local.setUint16(10, dosTime, true);
+    local.setUint16(12, dosDate, true);
+    local.setUint32(14, crc, true);
+    local.setUint32(18, compressed.bytes.length, true);
+    local.setUint32(22, entry.bytes.length, true);
+    local.setUint16(26, name.length, true);
+    local.setUint16(28, 0, true);
+    localHeader.set(name, 30);
+    localParts.push(localHeader, compressed.bytes);
+
+    const centralHeader = new Uint8Array(46 + name.length);
+    const central = new DataView(centralHeader.buffer);
+    central.setUint32(0, 0x02014b50, true);
+    central.setUint16(4, 20, true);
+    central.setUint16(6, 20, true);
+    central.setUint16(8, 0x0800, true);
+    central.setUint16(10, compressed.method, true);
+    central.setUint16(12, dosTime, true);
+    central.setUint16(14, dosDate, true);
+    central.setUint32(16, crc, true);
+    central.setUint32(20, compressed.bytes.length, true);
+    central.setUint32(24, entry.bytes.length, true);
+    central.setUint16(28, name.length, true);
+    central.setUint16(30, 0, true);
+    central.setUint16(32, 0, true);
+    central.setUint16(34, 0, true);
+    central.setUint16(36, 0, true);
+    central.setUint32(38, entry.isFolder ? 0x10 : 0, true);
+    central.setUint32(42, localOffset, true);
+    centralHeader.set(name, 46);
+    centralParts.push(centralHeader);
+
+    localOffset += localHeader.length + compressed.bytes.length;
+    centralSize += centralHeader.length;
+  }
+
+  const end = new Uint8Array(22);
+  const endView = new DataView(end.buffer);
+  endView.setUint32(0, 0x06054b50, true);
+  endView.setUint16(8, entries.length, true);
+  endView.setUint16(10, entries.length, true);
+  endView.setUint32(12, centralSize, true);
+  endView.setUint32(16, localOffset, true);
+  endView.setUint16(20, 0, true);
+  return new Blob([...localParts, ...centralParts, end], { type: "application/zip" });
+}
+
+document.getElementById("open-projects").addEventListener("click", () => {
+  flushProjectSave()
+    .then(() => {
+      activeProject = null;
+      selectedProjectPath = null;
+      transitionToView("workspace", "forward");
+    })
+    .catch(showWorkspaceError);
+});
+
+
+// ---------- Runners ----------
+
+function runnerBlock(type, fixedCode, which) {
+  if (type === "js") {
+    return `<div class="btn-row">
+      <button class="btn" onclick="runJS('${which}', ${fixedCode === null ? "null" : "true"})">▶ Run</button>
+    </div>
+    <div class="output" id="${which}-output">Output will appear here.</div>`;
+  }
+  if (type === "html") {
+    return `<div class="btn-row">
+      <button class="btn" onclick="runHTML('${which}')">▶ Preview</button>
+    </div>
+    <iframe class="preview-frame" id="${which}-frame" title="${which === "example" ? "Example rendered result" : "Exercise preview"}" sandbox="allow-scripts"></iframe>`;
+  }
+  if (type === "python") {
+    return `<div class="btn-row">
+      <button class="btn" id="${which}-py-btn" onclick="runPython('${which}')">▶ Run</button>
+    </div>
+    <div class="output" id="${which}-output">Output will appear here. (First run loads Python, which takes a few seconds.)</div>`;
+  }
+  if (type === "cpp") {
+    const checkBtn = which === "exercise"
+      ? `<div class="btn-row"><button class="btn" onclick="checkExerciseIfNeeded('exercise')">✔ Check my code</button></div>`
+      : "";
+    return `${checkBtn}<div class="output">C++ needs a compiler, so run it on your own computer. Save the code as <code>main.cpp</code>, then run:
+g++ -std=c++17 main.cpp -o main
+./main        (Windows: main.exe, or use an online compiler if you have no g++)</div>`;
+  }
+  return "";
+}
+
+function getCode(which) {
+  if (which === "exercise") return document.getElementById("exercise-editor").value;
+  // For the example, use the lesson's example code.
+  return lessonsFor(state.track)[state.lessonIndex].example;
+}
+
+function setOutput(which, text, isError) {
+  const el = document.getElementById(which + "-output");
+  el.textContent = text;
+  el.classList.toggle("error", !!isError);
+}
+
+async function runJS(which) {
+  const code = getCode(which);
+  const logs = [];
+  const fakeConsole = {
+    log: (...args) => logs.push(args.map(formatValue).join(" ")),
+    error: (...args) => logs.push("Error: " + args.map(formatValue).join(" ")),
+    warn: (...args) => logs.push("Warning: " + args.map(formatValue).join(" ")),
+  };
+  try {
+    // Run in a function scope with console replaced, so output appears on the page.
+    const execute = new Function("console", `return (async () => {\n${code}\n})()`);
+    await execute(fakeConsole);
+    setOutput(which, logs.length ? logs.join("\n") : "(no output - try console.log)", false);
+  } catch (err) {
+    setOutput(which, logs.join("\n") + (logs.length ? "\n" : "") + "Error: " + err.message, true);
+  }
+  checkExerciseIfNeeded(which);
+}
+
+function runHTML(which) {
+  const code = getCode(which);
+  document.getElementById(which + "-frame").srcdoc = code;
+  checkExerciseIfNeeded(which);
+}
+
+let pyodideReady = null;
+async function loadPyodideOnce() {
+  if (!pyodideReady) {
+    pyodideReady = (async () => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js";
+      document.head.appendChild(script);
+      await new Promise((res, rej) => {
+        script.onload = res;
+        script.onerror = () => rej(new Error("Could not load Python runtime. Check your internet connection."));
+      });
+      return await loadPyodide();
+    })();
+  }
+  return pyodideReady;
+}
+
+async function runPython(which) {
+  const btn = document.getElementById(which + "-py-btn");
+  btn.disabled = true;
+  setOutput(which, "Loading Python...", false);
+  try {
+    const py = await loadPyodideOnce();
+    // Capture print() output into a variable.
+    py.runPython(`
+import sys, io
+sys.stdout = io.StringIO()
+`);
+    try {
+      py.runPython(getCode(which));
+      const out = py.runPython("sys.stdout.getvalue()");
+      setOutput(which, out || "(no output - try print())", false);
+    } catch (err) {
+      const out = py.runPython("sys.stdout.getvalue()");
+      setOutput(which, out + "Error: " + err.message, true);
+    } finally {
+      py.runPython("sys.stdout = sys.__stdout__");
+    }
+    checkExerciseIfNeeded(which);
+  } catch (err) {
+    setOutput(which, err.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ---------- Exercise checking ----------
+// Lessons can define exercise.check(code) returning { ok, message }.
+// Used for lightweight automatic feedback on exercises.
+
+function checkExerciseIfNeeded(which) {
+  if (which !== "exercise") return;
+  const lesson = lessonsFor(state.track)[state.lessonIndex];
+  if (!lesson.exercise.check) return;
+  const code = getCode("exercise");
+  let result;
+  try {
+    result = lesson.exercise.check(code);
+  } catch (e) {
+    result = { ok: false, message: "Could not check this yet. " + e.message };
+  }
+  const feedbackEl = document.getElementById("exercise-feedback") || createFeedbackEl();
+  feedbackEl.className = "feedback " + (result.ok ? "ok" : "bad");
+  feedbackEl.textContent = result.message;
+  if (result.ok) markDone(state.track, lesson);
+}
+
+function createFeedbackEl() {
+  const el = document.createElement("div");
+  el.id = "exercise-feedback";
+  el.className = "feedback";
+  const editor = document.getElementById("exercise-editor");
+  editor.parentNode.insertBefore(el, editor.nextSibling);
+  return el;
+}
+
+// ---------- Quiz ----------
+
+function renderQuiz(lesson) {
+  const el = document.getElementById("quiz");
+  el.innerHTML = "";
+  const session = quizSessionFor(lesson);
+  const questions = session.questions;
+  const grid = document.createElement("div");
+  grid.className = "quiz-grid";
+  questions.forEach((item, qi) => {
+    const wrap = document.createElement("div");
+    wrap.className = "quiz-item";
+    const question = document.createElement("div");
+    question.className = "quiz-q";
+    question.textContent = `${qi + 1}. ${item.q}`;
+    wrap.appendChild(question);
+    item.options.forEach((opt, oi) => {
+      const label = document.createElement("label");
+      label.className = "quiz-opt";
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = `q${qi}`;
+      input.value = oi;
+      input.checked = session.answers[qi] === oi;
+      input.addEventListener("change", () => {
+        session.answers[qi] = oi;
+        session.result = null;
+        const feedback = el.querySelector(".quiz-feedback");
+        if (feedback) feedback.remove();
+        updateQuizProgress(session);
+      });
+      const text = document.createTextNode(" " + opt);
+      label.append(input, text);
+      wrap.appendChild(label);
+    });
+    grid.appendChild(wrap);
+  });
+  el.appendChild(grid);
+
+  const btn = document.createElement("button");
+  btn.className = "btn";
+  btn.textContent = "Check answers";
+  btn.onclick = () => {
+    if (session.answers.some((answer) => answer === null)) {
+      session.result = { message: `Answer all ${questions.length} questions before checking your score.`, allRight: false };
+    } else {
+      const correct = questions.reduce(
+        (total, question, index) => total + (session.answers[index] === question.answer ? 1 : 0),
+        0,
+      );
+      const allRight = correct === questions.length;
+      session.result = {
+        message: allRight
+          ? `All ${correct} correct. Lesson complete!`
+          : `${correct} of ${questions.length} correct. Review your choices and try again.`,
+        allRight,
+      };
+      if (allRight) markDone(state.track, lesson);
+    }
+    el.querySelectorAll(".quiz-feedback").forEach((node) => node.remove());
+    renderQuizFeedback(el, session);
+  };
+  el.appendChild(btn);
+  renderQuizFeedback(el, session);
+  updateQuizProgress(session);
+  addRainbowWords(el);
+}
+
+function quizSessionFor(lesson) {
+  const key = lessonKey(state.track, lesson);
+  if (!quizSessions[key]) {
+    const questions = buildLessonQuiz(lesson);
+    quizSessions[key] = {
+      questions,
+      answers: Array(questions.length).fill(null),
+      result: null,
+    };
+  }
+  return quizSessions[key];
+}
+
+function renderQuizFeedback(container, session) {
+  if (!session.result) return;
+  const feedback = document.createElement("div");
+  feedback.className = "feedback quiz-feedback " + (session.result.allRight ? "ok" : "bad");
+  feedback.setAttribute("role", "status");
+  feedback.textContent = session.result.message;
+  container.appendChild(feedback);
+}
+
+function updateQuizProgress(session) {
+  const answered = session.answers.filter((answer) => answer !== null).length;
+  const text = document.getElementById("quiz-progress-text");
+  const bar = document.querySelector(".quiz-progress-bar");
+  text.textContent = `${answered} of ${session.questions.length} questions answered`;
+  bar.setAttribute("aria-valuemax", session.questions.length);
+  bar.setAttribute("aria-valuenow", answered);
+  bar.firstElementChild.style.width = `${(answered / session.questions.length) * 100}%`;
+}
+
+function buildLessonQuiz(lesson) {
+  const facts = window.LESSON_QUIZ_FACTS[lesson.id];
+  if (!facts || facts.length !== 5) return lesson.quiz;
+
+  const questions = [];
+  const questionKinds = [
+    { field: "meaning", prompt: (fact) => `What does ${fact.term} help you do?` },
+    { field: "syntax", prompt: (fact) => `Which example correctly uses ${fact.term}?` },
+    { field: "result", prompt: (fact) => `What does this ${fact.term} example produce: ${fact.syntax}?` },
+    { field: "pitfall", prompt: (fact) => `Which mistake should you avoid with ${fact.term}?` },
+  ];
+
+  questionKinds.forEach((kind) => {
+    facts.forEach((fact, index) => {
+      const options = [fact[kind.field]];
+      for (let offset = 1; offset < facts.length && options.length < 4; offset++) {
+        const distractor = facts[(index + offset) % facts.length][kind.field];
+        if (!options.includes(distractor)) options.push(distractor);
+      }
+      if (options.length !== 4) {
+        throw new Error(`Quiz facts for ${lesson.id} must have four distinct ${kind.field} choices.`);
+      }
+      const answer = Math.floor(Math.random() * options.length);
+      [options[answer], options[0]] = [options[0], options[answer]];
+      questions.push({ q: kind.prompt(fact), options, answer });
+    });
+  });
+
+  return questions;
+}
+
+// ---------- Helpers ----------
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function addRainbowWords(container) {
+  const cards = container.matches(".card") ? [container] : container.querySelectorAll(".card");
+  let wordIndex = 0;
+  cards.forEach((card) => {
+    const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent || parent.closest("a, button, textarea, input, select, option, .quiz-opt, .feedback")) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        if (!parent.closest("p, li, h3, h4, strong, code, .quiz-q") || !node.textContent.trim()) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    const textNodes = [];
+    while (walker.nextNode()) {
+      textNodes.push(walker.currentNode);
+    }
+    textNodes.forEach((node) => {
+      let ancestor = node.parentElement;
+      while (ancestor && ancestor !== card) {
+        if (ancestor.matches("p, li, h3, h4, strong, code, .quiz-q")) {
+          ancestor.classList.add("rainbow-words");
+        }
+        ancestor = ancestor.parentElement;
+      }
+
+      const fragment = document.createDocumentFragment();
+      node.textContent.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) {
+          fragment.appendChild(document.createTextNode(part));
+          return;
+        }
+        const word = document.createElement("span");
+        word.className = "rainbow-word";
+        word.style.setProperty("--word-hue", `${(wordIndex * 47) % 360}deg`);
+        word.textContent = part;
+        wordIndex++;
+        fragment.appendChild(word);
+      });
+      node.parentNode.replaceChild(fragment, node);
+    });
+  });
+}
+
+function formatValue(v) {
+  if (typeof v === "object") {
+    try { return JSON.stringify(v); } catch (e) { return String(v); }
+  }
+  return String(v);
+}
+
+// Expose handlers used by inline onclick attributes.
+window.runJS = runJS;
+window.runHTML = runHTML;
+window.runPython = runPython;
+window.checkExerciseIfNeeded = checkExerciseIfNeeded;
+
+document.getElementById("download-website").addEventListener("click", () => {
+  const source = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const file = new Blob([source], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "CodeLearn.html";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+render();
+
+  </script>
 </body>
 </html>
